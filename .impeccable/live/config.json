@@ -1,0 +1,8 @@
+{
+  "framework": "nextjs",
+  "files": ["src/app/**/page.tsx", "src/app/layout.tsx"],
+  "insertBefore": ["</body>"],
+  "commentSyntax": "//",
+  "cspChecked": true,
+  "notes": "Next.js App Router with TypeScript. Dev server runs on port 3000."
+}
