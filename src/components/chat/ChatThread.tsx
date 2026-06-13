@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useWriteContract, usePublicClient } from "wagmi";
 import { BalanceCard } from "./BalanceCard";
 import { MessageBubble } from "./MessageBubble";
 import { QuickChips } from "./QuickChips";
@@ -9,6 +9,7 @@ import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
+import { executeAction, EXPLORER_BASE } from "@/lib/contracts";
 
 interface Message {
   id: string;
@@ -71,6 +72,8 @@ function actionLabel(action: AgentAction): string {
 
 export function ChatThread() {
   const { address, isConnected } = useAccount();
+  const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -143,25 +146,67 @@ export function ChatThread() {
     }
   };
 
-  const handleApprove = (messageId: string) => {
-    // TODO: wire to actual contract call via viem
+  const handleApprove = async (messageId: string, action: AgentAction) => {
+    // Mark as pending immediately so user sees feedback
     setMessages((prev) =>
       prev.map((m) =>
-        m.id === messageId
-          ? {
-              ...m,
-              type: "success" as const,
-              txHash: "pending",
-              explorerUrl: undefined,
-            }
-          : m
+        m.id === messageId ? { ...m, type: "success" as const, txHash: "pending" } : m
       )
     );
-    addMessage({
-      type: "agent",
-      content: "Transaction submitted! (Contract integration coming next — deploy contracts first.)",
-      timestamp: new Date(),
-    });
+
+    try {
+      addMessage({
+        type: "agent",
+        content: "Approving cUSD spend... (check your wallet)",
+        timestamp: new Date(),
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hash = await executeAction(action, writeContractAsync as any);
+
+      addMessage({
+        type: "agent",
+        content: "Transaction submitted! Waiting for confirmation...",
+        timestamp: new Date(),
+      });
+
+      // Wait for the tx to be mined
+      if (publicClient) {
+        await publicClient.waitForTransactionReceipt({ hash });
+      }
+
+      const explorerUrl = `${EXPLORER_BASE}/tx/${hash}`;
+
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId ? { ...m, txHash: hash, explorerUrl } : m
+        )
+      );
+
+      addMessage({
+        type: "agent",
+        content: `Transaction confirmed! View on explorer:\n${explorerUrl}`,
+        timestamp: new Date(),
+      });
+    } catch (err: unknown) {
+      // Revert card back to confirmation state on error
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId ? { ...m, type: "confirmation" as const, txHash: undefined } : m
+        )
+      );
+
+      const msg = err instanceof Error ? err.message : "Transaction failed";
+      const isRejected = msg.toLowerCase().includes("rejected") || msg.toLowerCase().includes("denied");
+
+      addMessage({
+        type: "agent",
+        content: isRejected
+          ? "Transaction cancelled. Try again when ready."
+          : `Transaction failed: ${msg}`,
+        timestamp: new Date(),
+      });
+    }
   };
 
   return (
@@ -187,7 +232,7 @@ export function ChatThread() {
                 onCancel={() =>
                   setMessages((prev) => prev.filter((m) => m.id !== message.id))
                 }
-                onApprove={() => handleApprove(message.id)}
+                onApprove={() => handleApprove(message.id, action)}
               />
             );
           }
