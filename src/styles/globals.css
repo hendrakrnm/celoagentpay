@@ -5,22 +5,22 @@
    ======================================== */
 
 :root {
-  /* Primary — Celo Green */
-  --color-primary: #1D9E75;
-  --color-primary-light: #E1F5EE;
-  --color-primary-dark: #0F6E56;
+  /* Primary — Blue */
+  --color-primary: #2B7FFF;
+  --color-primary-light: #E8F1FF;
+  --color-primary-dark: #1A5FCC;
 
-  /* Neutral — Warm Gray */
-  --color-bg: #FAFAF9;
+  /* Background — Light */
+  --color-bg: #EAEDF1;
   --color-surface: #FFFFFF;
-  --color-surface-raised: #F5F4F2;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --color-surface-raised: #F5F6F8;
+  --color-border: rgba(0, 0, 0, 0.10);
+  --color-border-strong: rgba(0, 0, 0, 0.18);
 
   /* Text */
-  --color-text-primary: #1A1916;
-  --color-text-secondary: #6B6A66;
-  --color-text-tertiary: #9B9A96;
+  --color-text-primary: #111111;
+  --color-text-secondary: #5F6368;
+  --color-text-tertiary: #9AA0A6;
 
   /* Semantic */
   --color-success: #16A34A;
@@ -30,22 +30,16 @@
   --color-danger: #DC2626;
   --color-danger-light: #FEE2E2;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.04);
-}
+  /* Chat bubbles */
+  --bubble-user-bg: #2B7FFF;
+  --bubble-user-text: #FFFFFF;
+  --bubble-agent-bg: #FFFFFF;
+  --bubble-agent-text: #111111;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #111110;
-    --color-surface: #1C1C1A;
-    --color-surface-raised: #242422;
-    --color-border: rgba(255, 255, 255, 0.08);
-    --color-border-strong: rgba(255, 255, 255, 0.15);
-    --color-text-primary: #EEEEEC;
-    --color-text-secondary: #9B9A96;
-  }
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* ========================================
@@ -120,8 +114,23 @@ body {
    TYPOGRAPHY UTILITIES
    ======================================== */
 
+.text-10 {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.text-11 {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .text-12 {
   font-size: 12px;
+  line-height: 1.4;
+}
+
+.text-13 {
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -251,6 +260,20 @@ input:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+}
+
+/* ========================================
+   APP SHELL — full-height chat layout
+   ======================================== */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* ========================================
