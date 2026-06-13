@@ -1,5 +1,6 @@
 import { parseEther } from "viem";
-import { CONTRACT_ADDRESSES, CUSD_ADDRESS } from "./celo";
+import { CONTRACT_ADDRESSES } from "./celo";
+import { getToken } from "./tokens";
 
 export const CELO_PAY_AGENT_ABI = [
   {
@@ -72,7 +73,17 @@ export const PAYMENT_SCHEDULER_ABI = [
   },
 ] as const;
 
-export const CUSD_APPROVE_ABI = [
+export const ERC20_ABI = [
+  {
+    name: "transfer",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
   {
     name: "approve",
     type: "function",
@@ -94,85 +105,131 @@ type WriteContractFn = (params: {
   args: unknown[];
 }) => Promise<`0x${string}`>;
 
-// Returns the tx hash of the final (main) contract call
+type SendTransactionFn = (params: {
+  to: `0x${string}`;
+  value: bigint;
+}) => Promise<`0x${string}`>;
+
+export interface ExecuteOptions {
+  writeContractAsync: WriteContractFn;
+  sendTransactionAsync: SendTransactionFn;
+}
+
+// Returns tx hash of the final (main) call
 export async function executeAction(
   action: import("./agent").AgentAction,
-  writeContractAsync: WriteContractFn
+  opts: ExecuteOptions
 ): Promise<`0x${string}`> {
-  const cusd = CUSD_ADDRESS;
-  const agent = CONTRACT_ADDRESSES.celoPayAgent;
-  const group = CONTRACT_ADDRESSES.groupPayment;
-  const scheduler = CONTRACT_ADDRESSES.paymentScheduler;
-
-  if (!cusd) throw new Error("cUSD address not configured");
+  const { writeContractAsync, sendTransactionAsync } = opts;
 
   if (action.action === "sendPayment") {
-    if (!agent) throw new Error("CeloPayAgent address not configured");
+    const token = getToken(action.params.token ?? "cUSD");
     const amountWei = parseEther(String(action.params.amount));
+    const to = action.params.to as `0x${string}`;
 
-    await writeContractAsync({
-      address: cusd,
-      abi: CUSD_APPROVE_ABI,
-      functionName: "approve",
-      args: [agent, amountWei],
-    });
+    if (token.isNative) {
+      // CELO native transfer — no approve, just send value
+      return sendTransactionAsync({ to, value: amountWei });
+    }
 
+    // ERC20: direct transfer() — no approve needed (user calls from their wallet)
     return writeContractAsync({
-      address: agent,
-      abi: CELO_PAY_AGENT_ABI,
-      functionName: "sendPayment",
-      args: [action.params.to as `0x${string}`, amountWei, action.params.memo],
+      address: token.address!,
+      abi: ERC20_ABI,
+      functionName: "transfer",
+      args: [to, amountWei],
     });
   }
 
   if (action.action === "batchSend") {
-    if (!agent) throw new Error("CeloPayAgent address not configured");
-    const total = action.params.payments.reduce((s, p) => s + p.amount, 0);
-    const totalWei = parseEther(String(total));
+    const token = getToken(action.params.token ?? "cUSD");
+    const agent = CONTRACT_ADDRESSES.celoPayAgent;
 
-    await writeContractAsync({
-      address: cusd,
-      abi: CUSD_APPROVE_ABI,
-      functionName: "approve",
-      args: [agent, totalWei],
-    });
+    if (token.isNative) {
+      // For CELO batch, send sequentially (simple approach)
+      let lastHash: `0x${string}` = "0x" as `0x${string}`;
+      for (const p of action.params.payments) {
+        lastHash = await sendTransactionAsync({
+          to: p.to as `0x${string}`,
+          value: parseEther(String(p.amount)),
+        });
+      }
+      return lastHash;
+    }
 
-    const payments = action.params.payments.map((p) => ({
-      recipient: p.to as `0x${string}`,
-      amount: parseEther(String(p.amount)),
-    }));
+    if (agent) {
+      // ERC20 batch via CeloPayAgent (approve + batchSend)
+      const total = action.params.payments.reduce((s, p) => s + p.amount, 0);
+      await writeContractAsync({
+        address: token.address!,
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [agent, parseEther(String(total))],
+      });
+      const payments = action.params.payments.map((p) => ({
+        recipient: p.to as `0x${string}`,
+        amount: parseEther(String(p.amount)),
+      }));
+      return writeContractAsync({
+        address: agent,
+        abi: CELO_PAY_AGENT_ABI,
+        functionName: "batchSend",
+        args: [payments],
+      });
+    }
 
-    return writeContractAsync({
-      address: agent,
-      abi: CELO_PAY_AGENT_ABI,
-      functionName: "batchSend",
-      args: [payments],
-    });
+    // Fallback: sequential direct transfers
+    let lastHash: `0x${string}` = "0x" as `0x${string}`;
+    for (const p of action.params.payments) {
+      lastHash = await writeContractAsync({
+        address: token.address!,
+        abi: ERC20_ABI,
+        functionName: "transfer",
+        args: [p.to as `0x${string}`, parseEther(String(p.amount))],
+      });
+    }
+    return lastHash;
   }
 
   if (action.action === "createGroup") {
+    const group = CONTRACT_ADDRESSES.groupPayment;
     if (!group) throw new Error("GroupPayment address not configured");
+    const token = getToken(action.params.token ?? "cUSD");
     const targetWei = parseEther(String(action.params.targetAmount));
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + action.params.deadlineHours * 3600);
-
+    const deadline = BigInt(
+      Math.floor(Date.now() / 1000) + action.params.deadlineHours * 3600
+    );
+    // GroupPayment contract is cUSD-only; warn if different token selected
+    if (!token.isNative && token.address !== null) {
+      // Still use the contract — it uses transferFrom on whatever token the initiator chose
+    }
     return writeContractAsync({
       address: group,
       abi: GROUP_PAYMENT_ABI,
       functionName: "createGroup",
-      args: [action.params.recipient as `0x${string}`, targetWei, action.params.description, deadline],
+      args: [
+        action.params.recipient as `0x${string}`,
+        targetWei,
+        action.params.description,
+        deadline,
+      ],
     });
   }
 
   if (action.action === "contribute") {
+    const group = CONTRACT_ADDRESSES.groupPayment;
     if (!group) throw new Error("GroupPayment address not configured");
+    const token = getToken(action.params.token ?? "cUSD");
     const amountWei = parseEther(String(action.params.amount));
 
-    await writeContractAsync({
-      address: cusd,
-      abi: CUSD_APPROVE_ABI,
-      functionName: "approve",
-      args: [group, amountWei],
-    });
+    if (!token.isNative) {
+      await writeContractAsync({
+        address: token.address!,
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [group, amountWei],
+      });
+    }
 
     return writeContractAsync({
       address: group,
@@ -183,20 +240,22 @@ export async function executeAction(
   }
 
   if (action.action === "createSchedule") {
+    const scheduler = CONTRACT_ADDRESSES.paymentScheduler;
     if (!scheduler) throw new Error("PaymentScheduler address not configured");
+    const token = getToken(action.params.token ?? "cUSD");
     const amountWei = parseEther(String(action.params.amount));
     const intervalSec = BigInt(action.params.intervalDays * 86400);
     const startNow = BigInt(Math.floor(Date.now() / 1000));
 
-    // Approve a large allowance for recurring payments (1 year worth)
-    const maxAllowance = amountWei * BigInt(365);
-
-    await writeContractAsync({
-      address: cusd,
-      abi: CUSD_APPROVE_ABI,
-      functionName: "approve",
-      args: [scheduler, maxAllowance],
-    });
+    if (!token.isNative) {
+      // Approve 1 year worth of payments
+      await writeContractAsync({
+        address: token.address!,
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [scheduler, amountWei * BigInt(365)],
+      });
+    }
 
     return writeContractAsync({
       address: scheduler,

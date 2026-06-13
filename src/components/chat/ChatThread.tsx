@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { useAccount, useWriteContract, usePublicClient } from "wagmi";
+import { useAccount, useWriteContract, usePublicClient, useSendTransaction } from "wagmi";
 import { BalanceCard } from "./BalanceCard";
 import { MessageBubble } from "./MessageBubble";
 import { QuickChips } from "./QuickChips";
@@ -23,33 +23,39 @@ interface Message {
 
 function buildConfirmDetails(action: AgentAction): Record<string, string | number | undefined> {
   if (action.action === "sendPayment") {
+    const token = action.params.token ?? "cUSD";
     return {
       To: action.params.to,
-      Amount: `${action.params.amount} cUSD`,
+      Amount: `${action.params.amount} ${token}`,
       Memo: action.params.memo,
+      Token: token,
     };
   }
   if (action.action === "batchSend") {
+    const token = action.params.token ?? "cUSD";
     const recipients = action.params.payments
-      .map((p) => `${p.to.slice(0, 6)}…${p.to.slice(-4)}: ${p.amount} cUSD`)
+      .map((p) => `${p.to.slice(0, 6)}…${p.to.slice(-4)}: ${p.amount} ${token}`)
       .join(", ");
-    return { Recipients: recipients };
+    return { Recipients: recipients, Token: token };
   }
   if (action.action === "createGroup") {
+    const token = action.params.token ?? "cUSD";
     return {
       Recipient: action.params.recipient,
-      Target: `${action.params.targetAmount} cUSD`,
+      Target: `${action.params.targetAmount} ${token}`,
       Description: action.params.description,
       Deadline: `${action.params.deadlineHours}h`,
     };
   }
   if (action.action === "contribute") {
-    return { "Group ID": action.params.groupId, Amount: `${action.params.amount} cUSD` };
+    const token = action.params.token ?? "cUSD";
+    return { "Group ID": action.params.groupId, Amount: `${action.params.amount} ${token}` };
   }
   if (action.action === "createSchedule") {
+    const token = action.params.token ?? "cUSD";
     return {
       To: action.params.recipient,
-      Amount: `${action.params.amount} cUSD`,
+      Amount: `${action.params.amount} ${token}`,
       Interval: `Every ${action.params.intervalDays} day(s)`,
       Memo: action.params.memo,
     };
@@ -73,6 +79,7 @@ function actionLabel(action: AgentAction): string {
 export function ChatThread() {
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { sendTransactionAsync } = useSendTransaction();
   const publicClient = usePublicClient();
 
   const [messages, setMessages] = useState<Message[]>([
@@ -162,7 +169,10 @@ export function ChatThread() {
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hash = await executeAction(action, writeContractAsync as any);
+      const hash = await executeAction(action, {
+        writeContractAsync: writeContractAsync as any,
+        sendTransactionAsync: sendTransactionAsync as any,
+      });
 
       addMessage({
         type: "agent",
