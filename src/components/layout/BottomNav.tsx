@@ -15,16 +15,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav
-      className="
-        fixed bottom-0 left-0 right-0 z-40
-        bg-[var(--color-surface)] backdrop-blur-[12px]
-        border-t border-[var(--color-border)]
-        flex items-center justify-around
-        h-16 px-4
-        safe-area-inset-bottom
-      "
-    >
+    <nav className="flex-shrink-0 h-16 flex items-center justify-around px-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
       {navItems.map(({ href, label, icon: Icon }) => {
         const isActive = pathname === href;
         return (
@@ -32,13 +23,12 @@ export function BottomNav() {
             key={href}
             href={href}
             className={`
-              flex flex-col items-center gap-1 px-4 py-2
-              rounded-lg transition-colors duration-150
-              min-h-[44px] min-w-[44px] flex items-center justify-center
-              ${
-                isActive
-                  ? "text-[var(--color-primary)]"
-                  : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+              flex flex-col items-center gap-1 px-4 py-2 rounded-lg
+              min-h-[44px] min-w-[44px] justify-center
+              transition-colors duration-150
+              ${isActive
+                ? "text-blue-600"
+                : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
               }
             `}
           >
