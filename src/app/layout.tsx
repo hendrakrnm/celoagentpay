@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { Providers } from "@/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,10 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "CeloPay Agent",
-  description: "AI-powered payment assistant for MiniPay. Send money with natural language commands.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  description: "AI-powered payment assistant for MiniPay.",
+  icons: { icon: "/favicon.ico" },
 };
 
 export const viewport: Viewport = {
@@ -28,23 +28,21 @@ export const viewport: Viewport = {
   themeColor: "#1D9E75",
 };
 
-import { BottomNav } from "@/components/layout/BottomNav";
-
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`h-full ${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--color-bg)]">
-        <main className="flex-1 flex flex-col max-w-[430px] mx-auto w-full pb-20 overflow-y-auto">
-          {children}
-        </main>
-        <BottomNav />
+      <body className="h-full bg-[var(--color-bg)] text-[var(--color-text-primary)]">
+        <Providers>
+          <div className="app-shell">
+            <main className="flex-1 flex flex-col min-h-0">{children}</main>
+            <BottomNav />
+          </div>
+        </Providers>
       </body>
     </html>
   );
