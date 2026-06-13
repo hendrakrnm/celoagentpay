@@ -1,70 +1,38 @@
 "use client";
 
 import React from "react";
-import { Settings, History } from "lucide-react";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { injected } from "wagmi/connectors";
+import { shortAddress } from "@/lib/celo";
+import { Wallet, LogOut } from "lucide-react";
 
-interface PageHeaderProps {
-  title: string;
-  showActions?: boolean;
-  onSettingsClick?: () => void;
-  onHistoryClick?: () => void;
-  action?: React.ReactNode;
-}
+export function PageHeader({ title }: { title: string }) {
+  const { address, isConnected } = useAccount();
+  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
 
-export function PageHeader({
-  title,
-  showActions = false,
-  onSettingsClick,
-  onHistoryClick,
-  action,
-}: PageHeaderProps) {
   return (
-    <header
-      className="
-        sticky top-0 z-30
-        bg-[var(--color-surface)]
-        border-b border-[var(--color-border)]
-        h-14 px-4 flex items-center justify-between
-      "
-    >
-      <h1 className="text-16 font-medium text-[var(--color-text-primary)]">
-        {title}
-      </h1>
+    <header className="flex-shrink-0 h-14 px-4 flex items-center justify-between bg-white border-b border-[var(--color-border)]">
+      <h1 className="text-16 font-bold text-[var(--color-text-primary)]">{title}</h1>
 
-      <div className="flex items-center gap-3">
-        {action && action}
-
-        {showActions && (
-          <>
-            {onHistoryClick && (
-              <button
-                onClick={onHistoryClick}
-                className="
-                  p-2 hover:bg-[var(--color-surface-raised)] rounded-lg
-                  transition-colors duration-150
-                  text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
-                "
-                aria-label="History"
-              >
-                <History className="w-5 h-5" />
-              </button>
-            )}
-            {onSettingsClick && (
-              <button
-                onClick={onSettingsClick}
-                className="
-                  p-2 hover:bg-[var(--color-surface-raised)] rounded-lg
-                  transition-colors duration-150
-                  text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
-                "
-                aria-label="Settings"
-              >
-                <Settings className="w-5 h-5" />
-              </button>
-            )}
-          </>
-        )}
-      </div>
+      {isConnected && address ? (
+        <button
+          onClick={() => disconnect()}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-surface-raised)] border border-[var(--color-border)] text-12 text-[var(--color-text-secondary)] hover:border-red-300 hover:text-red-500 transition-all"
+        >
+          <span className="font-mono">{shortAddress(address)}</span>
+          <LogOut className="w-3.5 h-3.5" />
+        </button>
+      ) : (
+        <button
+          onClick={() => connect({ connector: injected() })}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-12 font-medium transition-all active:scale-95"
+          style={{ background: "var(--color-primary)" }}
+        >
+          <Wallet className="w-3.5 h-3.5" />
+          Connect Wallet
+        </button>
+      )}
     </header>
   );
 }
