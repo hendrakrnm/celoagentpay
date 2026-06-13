@@ -1,35 +1,82 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { BalanceCard } from "./BalanceCard";
 import { MessageBubble } from "./MessageBubble";
 import { QuickChips } from "./QuickChips";
 import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
+import { parseIntent, type AgentAction } from "@/lib/agent";
 
 interface Message {
   id: string;
   type: "user" | "agent" | "agent-loading" | "confirmation" | "success";
   content?: string;
   timestamp?: Date;
-  action?: string;
-  details?: Record<string, string | number | undefined>;
+  action?: AgentAction;
   txHash?: string;
   explorerUrl?: string;
 }
 
-interface ChatThreadProps {
-  balance: number;
-  address: string;
+function buildConfirmDetails(action: AgentAction): Record<string, string | number | undefined> {
+  if (action.action === "sendPayment") {
+    return {
+      To: action.params.to,
+      Amount: `${action.params.amount} cUSD`,
+      Memo: action.params.memo,
+    };
+  }
+  if (action.action === "batchSend") {
+    const recipients = action.params.payments
+      .map((p) => `${p.to.slice(0, 6)}…${p.to.slice(-4)}: ${p.amount} cUSD`)
+      .join(", ");
+    return { Recipients: recipients };
+  }
+  if (action.action === "createGroup") {
+    return {
+      Recipient: action.params.recipient,
+      Target: `${action.params.targetAmount} cUSD`,
+      Description: action.params.description,
+      Deadline: `${action.params.deadlineHours}h`,
+    };
+  }
+  if (action.action === "contribute") {
+    return { "Group ID": action.params.groupId, Amount: `${action.params.amount} cUSD` };
+  }
+  if (action.action === "createSchedule") {
+    return {
+      To: action.params.recipient,
+      Amount: `${action.params.amount} cUSD`,
+      Interval: `Every ${action.params.intervalDays} day(s)`,
+      Memo: action.params.memo,
+    };
+  }
+  return {};
 }
 
-export function ChatThread({ balance, address }: ChatThreadProps) {
+function actionLabel(action: AgentAction): string {
+  const labels: Record<string, string> = {
+    sendPayment: "Send Payment",
+    batchSend: "Split Payment",
+    createGroup: "Create Group",
+    contribute: "Contribute to Group",
+    createSchedule: "Schedule Payment",
+    getBalance: "Check Balance",
+    getHistory: "Payment History",
+  };
+  return labels[action.action] ?? action.action;
+}
+
+export function ChatThread() {
+  const { address, isConnected } = useAccount();
+
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "1",
+      id: "welcome",
       type: "agent",
-      content: "Hi! I'm your CeloPay Agent. I can help you send payments, split bills, and manage recurring transfers. What would you like to do?",
+      content: "Hi! I'm your CeloPay Agent. Connect your wallet and tell me what you'd like to do.\n\nTry: \"send 5 cUSD to 0x123... for lunch\" or \"check my balance\"",
       timestamp: new Date(),
     },
   ]);
@@ -37,159 +84,143 @@ export function ChatThread({ balance, address }: ChatThreadProps) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = async (message: string) => {
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: "user",
-      content: message,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    // Simulate agent processing
-    setTimeout(() => {
-      // Add loading state
-      const loadingMessage: Message = {
-        id: Date.now().toString() + "-loading",
-        type: "agent-loading",
-        content: "",
-      };
-
-      setMessages((prev) => [...prev, loadingMessage]);
-
-      // Simulate response after 1.5s
-      setTimeout(() => {
-        setMessages((prev) => prev.filter((m) => m.id !== loadingMessage.id));
-
-        // Simulate different responses based on keywords
-        if (message.toLowerCase().includes("send")) {
-          // Show confirmation card
-          const confirmMessage: Message = {
-            id: Date.now().toString(),
-            type: "confirmation",
-            action: "Send Payment",
-            details: {
-              to: "0x742d35Cc6634C0532925a3b844Bc9e7595f3f8a",
-              amount: 5,
-              fee: "~0.001",
-              memo: "lunch money",
-            },
-          };
-          setMessages((prev) => [...prev, confirmMessage]);
-        } else if (message.toLowerCase().includes("balance")) {
-          // Show balance info
-          const agentMessage: Message = {
-            id: Date.now().toString(),
-            type: "agent",
-            content: `You have ${balance.toFixed(2)} cUSD available. This is your current balance on Celo Mainnet.`,
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, agentMessage]);
-        } else {
-          // Generic response
-          const agentMessage: Message = {
-            id: Date.now().toString(),
-            type: "agent",
-            content: "I can help with that! Please be more specific about what you'd like to do (e.g., 'send 5 cUSD to...' or 'split 30 between...').",
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, agentMessage]);
-        }
-
-        setIsLoading(false);
-      }, 1500);
-    }, 500);
+  const addMessage = (msg: Omit<Message, "id">) => {
+    setMessages((prev) => [...prev, { id: Date.now().toString() + Math.random(), ...msg }]);
   };
 
-  const handleConfirm = (details: Record<string, string | number | undefined>) => {
-    // Replace confirmation card with success card
+  const handleSendMessage = async (text: string) => {
+    if (!isConnected) {
+      addMessage({ type: "agent", content: "Please connect your wallet first.", timestamp: new Date() });
+      return;
+    }
+
+    addMessage({ type: "user", content: text, timestamp: new Date() });
+    setIsLoading(true);
+
+    const loadingId = Date.now().toString() + "-loading";
+    setMessages((prev) => [...prev, { id: loadingId, type: "agent-loading", content: "" }]);
+
+    try {
+      const result = await parseIntent(text);
+
+      setMessages((prev) => prev.filter((m) => m.id !== loadingId));
+
+      if (result.action === "clarify") {
+        addMessage({ type: "agent", content: (result as { action: "clarify"; message: string }).message, timestamp: new Date() });
+
+      } else if (result.action === "getBalance") {
+        addMessage({
+          type: "agent",
+          content: `Your balance is shown at the top of the screen. The cUSD address is:\n${address}`,
+          timestamp: new Date(),
+        });
+
+      } else if (result.action === "getHistory") {
+        addMessage({
+          type: "agent",
+          content: "Transaction history is available in the History tab below.",
+          timestamp: new Date(),
+        });
+
+      } else {
+        // Show confirmation card for all write actions
+        addMessage({ type: "confirmation", action: result });
+      }
+    } catch (err) {
+      setMessages((prev) => prev.filter((m) => m.id !== loadingId));
+      addMessage({
+        type: "agent",
+        content: "Something went wrong. Please try again.",
+        timestamp: new Date(),
+      });
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApprove = (messageId: string) => {
+    // TODO: wire to actual contract call via viem
     setMessages((prev) =>
       prev.map((m) =>
-        m.type === "confirmation"
+        m.id === messageId
           ? {
               ...m,
-              type: "success",
-              action: "Sent successfully",
-              txHash: "0x8f3a...2c91",
-              explorerUrl: "https://celoscan.io/tx/0x8f3a...2c91",
+              type: "success" as const,
+              txHash: "pending",
+              explorerUrl: undefined,
             }
           : m
       )
     );
+    addMessage({
+      type: "agent",
+      content: "Transaction submitted! (Contract integration coming next — deploy contracts first.)",
+      timestamp: new Date(),
+    });
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-[var(--color-bg)]">
-      <BalanceCard balance={balance} address={address} />
+    <div className="flex flex-col flex-1 min-h-0">
+      <BalanceCard />
 
-      {/* Message Thread */}
-      <div className="flex-1 overflow-y-auto pb-6 pt-2">
+      {/* Scrollable message area */}
+      <div
+        className="flex-1 overflow-y-auto min-h-0 py-4 w-full"
+        style={{ background: "var(--color-bg)" }}
+      >
         {messages.map((message) => {
-          switch (message.type) {
-            case "confirmation":
-              return (
-                <TxConfirmCard
-                  key={message.id}
-                  action={message.action || "Confirm"}
-                  details={message.details || {}}
-                  onCancel={() => {
-                    setMessages((prev) =>
-                      prev.filter((m) => m.id !== message.id)
-                    );
-                  }}
-                  onApprove={() => handleConfirm(message.details || {})}
-                />
-              );
-
-            case "success":
-              return (
-                <TxSuccessCard
-                  key={message.id}
-                  title={message.action || "Success"}
-                  details={`${message.details?.amount || ""} cUSD to ${String(message.details?.to || "").slice(0, 6)}...`}
-                  txHash={message.txHash}
-                  explorerUrl={message.explorerUrl}
-                />
-              );
-
-            case "agent-loading":
-              return (
-                <MessageBubble
-                  key={message.id}
-                  type="agent-loading"
-                  content=""
-                />
-              );
-
-            default:
-              return (
-                <MessageBubble
-                  key={message.id}
-                  type={message.type as "user" | "agent"}
-                  content={message.content || ""}
-                  timestamp={message.timestamp}
-                />
-              );
+          if (message.type === "confirmation" && message.action) {
+            const action = message.action;
+            if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
+              return null;
+            }
+            return (
+              <TxConfirmCard
+                key={message.id}
+                action={actionLabel(action)}
+                details={buildConfirmDetails(action)}
+                onCancel={() =>
+                  setMessages((prev) => prev.filter((m) => m.id !== message.id))
+                }
+                onApprove={() => handleApprove(message.id)}
+              />
+            );
           }
+
+          if (message.type === "success") {
+            return (
+              <TxSuccessCard
+                key={message.id}
+                title="Transaction Submitted"
+                details="Waiting for confirmation on Celo"
+                txHash={message.txHash}
+                explorerUrl={message.explorerUrl}
+              />
+            );
+          }
+
+          if (message.type === "agent-loading" || message.type === "user" || message.type === "agent") {
+            return (
+              <MessageBubble
+                key={message.id}
+                type={message.type as "user" | "agent" | "agent-loading"}
+                content={message.content || ""}
+                timestamp={message.timestamp}
+              />
+            );
+          }
+
+          return null;
         })}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Action Chips */}
       <QuickChips onSelect={handleSendMessage} />
-
-      {/* Command Input */}
       <CommandInput onSubmit={handleSendMessage} isLoading={isLoading} />
     </div>
   );
