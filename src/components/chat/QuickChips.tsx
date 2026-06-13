@@ -27,6 +27,7 @@ export function QuickChips({ onSelect }: QuickChipsProps) {
             onSelect(label);
             setTimeout(() => setActive(null), 300);
           }}
+          style={active === label ? { background: "var(--color-primary)", borderColor: "var(--color-primary)" } : {}}
           className={`
             px-4 py-2.5 rounded-[20px]
             text-13 font-medium whitespace-nowrap
@@ -36,8 +37,8 @@ export function QuickChips({ onSelect }: QuickChipsProps) {
             active:scale-95
             ${
               active === label
-                ? "bg-[var(--color-primary)] border-[var(--color-primary)] text-white shadow-[var(--shadow-md)] scale-105"
-                : "bg-[var(--color-surface-raised)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:shadow-[var(--shadow-md)]"
+                ? "text-white scale-105"
+                : "bg-white border-[var(--color-border)] text-[var(--color-text-secondary)]"
             }
           `}
         >
