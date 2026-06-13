@@ -8,7 +8,7 @@ import {PaymentScheduler} from "../src/PaymentScheduler.sol";
 
 contract DeployScript is Script {
     // Mainnet cUSD: 0x765DE816845861e75A25fCA122bb6898B8B1282a
-    // Alfajores cUSD: 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1
+    // Celo Sepolia cUSD: 0xEF4d55D6dE8e8d73232827Cd1e9b2F2dBb45bC80
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -20,10 +20,10 @@ contract DeployScript is Script {
             // Celo Mainnet
             cUSDAddress = 0x765DE816845861e75A25fCA122bb6898B8B1282a;
             console.log("Deploying to Celo Mainnet (chainId: 42220)");
-        } else if (chainId == 44787) {
-            // Celo Alfajores Testnet
-            cUSDAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
-            console.log("Deploying to Celo Alfajores Testnet (chainId: 44787)");
+        } else if (chainId == 11142220) {
+            // Celo Sepolia Testnet
+            cUSDAddress = 0xEF4d55D6dE8e8d73232827Cd1e9b2F2dBb45bC80;
+            console.log("Deploying to Celo Sepolia Testnet (chainId: 11142220)");
         } else {
             revert("Unsupported network");
         }

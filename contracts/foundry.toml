@@ -9,9 +9,9 @@ evm_version = "london"
 
 [rpc_endpoints]
 celo = "https://forno.celo.org"
-celo_alfajores = "https://alfajores-forno.celo-testnet.org"
+celo_sepolia = "https://forno.celo-sepolia.celo-testnet.org"
 localhost = "http://127.0.0.1:8545"
 
 [etherscan]
 celo = { key = "${CELOSCAN_API_KEY}", chain = 42220, url = "https://api.celoscan.io/api" }
-celo_alfajores = { key = "${CELOSCAN_API_KEY}", chain = 44787, url = "https://api-alfajores.celoscan.io/api" }
+celo_sepolia = { key = "${CELOSCAN_API_KEY}", chain = 11142220, url = "https://api.celoscan.io/api" }

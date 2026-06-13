@@ -1,8 +1,8 @@
-import { celo, celoAlfajores } from "wagmi/chains";
+import { celo, celoSepolia } from "wagmi/chains";
 
 export const IS_TESTNET = process.env.NEXT_PUBLIC_NETWORK !== "mainnet";
 
-export const activeChain = IS_TESTNET ? celoAlfajores : celo;
+export const activeChain = IS_TESTNET ? celoSepolia : celo;
 
 export const CUSD_ADDRESS = (
   IS_TESTNET
