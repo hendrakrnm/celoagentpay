@@ -1,93 +1,73 @@
 "use client";
 
-import { Copy, Check, Wallet } from "lucide-react";
+import { Copy, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { CUSD_ADDRESS, CUSD_ABI, shortAddress, formatCUSD } from "@/lib/celo";
 
-interface BalanceCardProps {
-  balance: number;
-  address: string;
-}
-
-export function BalanceCard({ balance, address }: BalanceCardProps) {
+export function BalanceCard() {
   const [copied, setCopied] = useState(false);
+  const { address, isConnected } = useAccount();
+
+  const { data: balanceWei, isLoading } = useReadContract({
+    address: CUSD_ADDRESS,
+    abi: CUSD_ABI,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
 
   const copyAddress = () => {
+    if (!address) return;
     navigator.clipboard.writeText(address);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shortAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
-  const avatarColor = [
-    "bg-blue-500",
-    "bg-purple-500",
-    "bg-pink-500",
-    "bg-yellow-500",
-  ][Math.floor(Math.random() * 4)];
+  if (!isConnected || !address) {
+    return (
+      <div className="flex-shrink-0 flex items-center justify-center px-4 py-3 bg-white border-b border-[var(--color-border)]">
+        <p className="text-13 text-[var(--color-text-tertiary)]">
+          Connect your wallet to get started
+        </p>
+      </div>
+    );
+  }
+
+  const balance = balanceWei ? formatCUSD(balanceWei as bigint) : "—";
 
   return (
-    <div
-      className="
-        sticky top-14 z-20 mx-4 mt-4 mb-2 p-4
-        rounded-[16px] border border-[var(--color-border)]
-        bg-gradient-to-br from-[var(--color-primary-light)] via-[var(--color-surface)] to-[var(--color-surface)]
-        shadow-[var(--shadow-md)]
-        backdrop-blur-sm
-      "
-    >
-      {/* Header with avatar */}
-      <div className="flex items-center gap-3 mb-4">
+    <div className="flex-shrink-0 flex items-center justify-between px-4 py-2 bg-white border-b border-[var(--color-border)]">
+      <div className="flex items-center gap-3">
         <div
-          className={`w-12 h-12 ${avatarColor} rounded-full flex items-center justify-center text-white font-bold text-16 shadow-[var(--shadow-md)]`}
+          className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ background: "var(--color-primary)" }}
         >
-          <Wallet className="w-6 h-6" />
+          <span className="text-12 font-bold text-white">$</span>
         </div>
-        <div className="flex-1">
-          <p className="text-12 text-[var(--color-text-tertiary)] font-medium">
-            Your Wallet
-          </p>
-          <p className="text-14 font-medium text-[var(--color-text-primary)]">
-            Celo Account
-          </p>
-        </div>
-      </div>
-
-      {/* Balance Display */}
-      <div className="mb-4">
-        <p className="text-12 text-[var(--color-text-secondary)] font-medium mb-1">
-          Available Balance
-        </p>
-        <div className="flex items-baseline gap-2">
-          <p className="text-32 font-bold text-[var(--color-primary-dark)]">
-            ${balance.toFixed(2)}
-          </p>
-          <span className="text-14 font-medium text-[var(--color-primary)]">
-            cUSD
-          </span>
+        <div>
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin text-[var(--color-text-tertiary)]" />
+          ) : (
+            <p className="text-16 font-bold leading-none" style={{ color: "var(--color-primary)" }}>
+              {balance} cUSD
+            </p>
+          )}
+          <p className="text-11 text-[var(--color-text-tertiary)] mt-0.5">Available balance</p>
         </div>
       </div>
 
-      {/* Address Copy */}
       <button
         onClick={copyAddress}
-        className="
-          w-full flex items-center justify-between gap-2
-          px-3 py-2 rounded-[10px]
-          bg-[var(--color-surface-raised)] hover:bg-[var(--color-border-strong)]
-          transition-all duration-150
-          border border-[var(--color-border)]
-        "
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[8px] bg-[var(--color-surface-raised)] border border-[var(--color-border)] transition-all hover:bg-[var(--color-border)]"
       >
-        <code className="font-mono text-12 text-[var(--color-text-secondary)]">
-          {shortAddress}
+        <code className="font-mono text-11 text-[var(--color-text-secondary)]">
+          {shortAddress(address)}
         </code>
         {copied ? (
-          <div className="flex items-center gap-1 text-[var(--color-success)]">
-            <Check className="w-4 h-4" />
-            <span className="text-11 font-medium">Copied!</span>
-          </div>
+          <Check className="w-3.5 h-3.5 text-green-500" />
         ) : (
-          <Copy className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+          <Copy className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
         )}
       </button>
     </div>
