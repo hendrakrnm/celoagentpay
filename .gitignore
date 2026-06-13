@@ -13,7 +13,9 @@
 # testing
 /coverage
 
-
+.env.local
+.env
+.env.example
 
 # next.js
 /.next/
@@ -41,3 +43,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.gstack/
