@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { useAccount, useWriteContract, usePublicClient, useSendTransaction } from "wagmi";
+import { useWriteContract, useSendTransaction } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { BalanceCard } from "./BalanceCard";
 import { MessageBubble } from "./MessageBubble";
 import { QuickChips } from "./QuickChips";
@@ -77,10 +78,9 @@ function actionLabel(action: AgentAction): string {
 }
 
 export function ChatThread() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isReady, publicClient, switchToCorrectChain } = useWallet();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
-  const publicClient = usePublicClient();
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -105,6 +105,11 @@ export function ChatThread() {
   const handleSendMessage = async (text: string) => {
     if (!isConnected) {
       addMessage({ type: "agent", content: "Please connect your wallet first.", timestamp: new Date() });
+      return;
+    }
+    if (!isReady) {
+      addMessage({ type: "agent", content: "You're on the wrong network. Please switch to Celo.", timestamp: new Date() });
+      switchToCorrectChain();
       return;
     }
 

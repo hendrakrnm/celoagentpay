@@ -2,8 +2,8 @@
 
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
-import { useAccount, useReadContracts, useBalance } from "wagmi";
-import { shortAddress } from "@/lib/celo";
+import { useReadContracts, useBalance } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { TOKENS } from "@/lib/tokens";
 
 const ERC20_BALANCE_ABI = [
@@ -24,7 +24,7 @@ function fmt(wei: bigint | undefined): string {
 
 export function BalanceCard() {
   const [copied, setCopied] = useState(false);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, shortAddress } = useWallet();
 
   // Native CELO balance
   const { data: nativeBal } = useBalance({
@@ -95,7 +95,7 @@ export function BalanceCard() {
           className="flex items-center gap-1.5 px-2 py-1 rounded-[6px] hover:bg-[var(--color-surface-raised)] transition-colors"
         >
           <code className="font-mono text-11 text-[var(--color-text-tertiary)]">
-            {shortAddress(address)}
+            {shortAddress}
           </code>
           {copied ? (
             <Check className="w-3 h-3 text-green-500" />
