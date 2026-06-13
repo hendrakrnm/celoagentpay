@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useState } from "react";
 import { Send, Mic } from "lucide-react";
 
 interface CommandInputProps {
@@ -14,16 +14,13 @@ export function CommandInput({
   isLoading = false,
   placeholder = "Send a payment command...",
 }: CommandInputProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const hasText = inputRef.current?.value.trim().length ?? 0 > 0;
+  const [value, setValue] = useState("");
 
   const handleSubmit = () => {
-    const value = inputRef.current?.value.trim();
-    if (value && !isLoading) {
-      onSubmit(value);
-      if (inputRef.current) {
-        inputRef.current.value = "";
-      }
+    const trimmed = value.trim();
+    if (trimmed && !isLoading) {
+      onSubmit(trimmed);
+      setValue("");
     }
   };
 
@@ -35,83 +32,36 @@ export function CommandInput({
   };
 
   return (
-    <div
-      className="
-        fixed bottom-20 left-0 right-0
-        px-3 pb-3 z-30
-        max-w-[430px] mx-auto w-full
-      "
-    >
-      <div
-        className="
-          h-12 px-4 rounded-[24px]
-          bg-[var(--color-surface)]
-          border border-[var(--color-border)]
-          flex items-center gap-3
-          shadow-[var(--shadow-md)]
-          focus-within:border-[var(--color-primary)]
-          focus-within:ring-2 focus-within:ring-[var(--color-primary-light)]
-          transition-all duration-200
-        "
-      >
+    <div className="flex-shrink-0 px-3 py-3 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
+      <div className="flex items-center gap-2 h-12 px-4 rounded-[24px] bg-[var(--color-surface-raised)] border border-[var(--color-border)] focus-within:border-[var(--color-primary)] focus-within:ring-1 focus-within:ring-[var(--color-primary)] transition-all duration-200">
         <input
-          ref={inputRef}
           type="text"
-          placeholder={placeholder}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          onChange={() => {
-            // Force re-render to update hasText
-            const input = inputRef.current;
-            input?.parentElement?.parentElement?.classList.toggle(
-              "has-text",
-              (input?.value.trim().length ?? 0) > 0
-            );
-          }}
+          placeholder={placeholder}
           disabled={isLoading}
-          className="
-            flex-1 bg-transparent
-            text-14 text-[var(--color-text-primary)]
-            placeholder:text-[var(--color-text-tertiary)]
-            outline-none
-            disabled:opacity-50
-          "
+          className="flex-1 bg-transparent text-14 text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none disabled:opacity-50"
         />
 
-        {hasText || isLoading ? (
+        {value.trim().length > 0 ? (
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="
-              w-10 h-10 rounded-full
-              bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)]
-              text-white
-              flex items-center justify-center
-              hover:shadow-[var(--shadow-lg)] active:scale-[0.9]
-              disabled:opacity-50 disabled:cursor-not-allowed
-              transition-all duration-150
-              flex-shrink-0
-              shadow-[var(--shadow-md)]
-            "
-            aria-label="Send message"
+            style={{ background: "var(--color-primary)" }}
+        className="w-9 h-9 rounded-full text-white flex items-center justify-center active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 flex-shrink-0"
+            aria-label="Send"
           >
             {isLoading ? (
-              <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+              <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
             ) : (
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4" />
             )}
           </button>
         ) : (
           <button
-            className="
-              w-9 h-9 rounded-full
-              text-[var(--color-text-tertiary)]
-              hover:text-[var(--color-primary)]
-              hover:bg-[var(--color-surface-raised)]
-              flex items-center justify-center
-              transition-all duration-150
-              flex-shrink-0
-            "
-            aria-label="Voice message"
+            className="w-9 h-9 rounded-full text-[var(--color-text-tertiary)] flex items-center justify-center flex-shrink-0"
+            aria-label="Voice"
           >
             <Mic className="w-5 h-5" />
           </button>
