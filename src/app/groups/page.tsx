@@ -13,15 +13,18 @@ export default function GroupsPage() {
       <div className="flex border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)]" style={{ gap: 12, padding: 16 }}>
         {['Active', 'Done', 'Void'].map((tab, index) => <button key={tab} className={`rounded-[12px] border-2 border-[var(--border-color)] px-[18px] py-2 text-[13px] font-bold uppercase shadow-[2px_2px_0_var(--border-color)] ${index === 0 ? 'translate-x-0.5 translate-y-0.5 bg-[var(--color-accent)] shadow-none' : 'bg-[var(--color-surface)]'}`}>{tab}</button>)}
       </div>
-      <main className="min-h-0 flex-1 overflow-y-auto" style={{ padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
+      <main className="min-h-0 flex-1 overflow-y-auto" style={{ padding: 20, display: "flex", flexDirection: "column", gap: 20 }}>
         {groups.map((group) => (
-          <article key={group.title} className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-[18px] shadow-[var(--shadow-offset)]">
-            <div className="mb-4 flex items-start justify-between">
-              <div><div className="text-lg font-bold text-[var(--border-color)]">{group.title}</div><div className="mt-1 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-secondary)]"><Users size={16} strokeWidth={2.5} />{group.members}</div></div>
+          <article key={group.title} className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] shadow-[var(--shadow-offset)]" style={{ padding: 18 }}>
+            <div className="flex items-start justify-between" style={{ marginBottom: 16 }}>
+              <div>
+                <div className="text-[22px] font-bold leading-tight text-[var(--border-color)]">{group.title}</div>
+                <div className="mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-secondary)]"><Users size={16} strokeWidth={2.5} />{group.members}</div>
+              </div>
               <div className={`inline-flex h-6 items-center rounded-[12px] border-2 border-[var(--border-color)] px-2.5 text-[11px] font-bold uppercase shadow-[2px_2px_0_var(--border-color)] ${group.badgeColor}`}>{group.badge}</div>
             </div>
-            <div className="mt-4 rounded-[12px] border-2 border-dashed border-[var(--border-color)] bg-white p-3">
-              <div className="mb-2 flex justify-between text-[13px] font-bold text-[var(--border-color)]"><span className="mono">{group.amount}</span><span>{group.progress}%</span></div>
+            <div className="rounded-[12px] border-2 border-dashed border-[var(--border-color)] bg-white" style={{ marginTop: 16, padding: 12 }}>
+              <div className="mb-3 flex justify-between text-[13px] font-bold text-[var(--border-color)]"><span className="mono">{group.amount}</span><span>{group.progress}%</span></div>
               <div className="h-3 overflow-hidden rounded-full border-2 border-[var(--border-color)] bg-[var(--color-surface)]"><div className="h-full border-r-2 border-[var(--border-color)]" style={{ width: `${group.progress}%`, backgroundColor: group.fill }} /></div>
             </div>
           </article>
