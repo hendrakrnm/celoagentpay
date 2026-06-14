@@ -1,41 +1,20 @@
 "use client";
 
-import { Copy, Check } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { useBalance, useReadContracts } from "wagmi";
+import { useBalance } from "wagmi";
 import { useWallet } from "@/lib/wallet";
-import { TOKENS } from "@/lib/tokens";
-
-const ERC20_BALANCE_ABI = [
-  {
-    name: "balanceOf",
-    type: "function",
-    stateMutability: "view",
-    inputs: [{ name: "account", type: "address" }],
-    outputs: [{ name: "", type: "uint256" }],
-  },
-] as const;
 
 function fmt(wei: bigint | undefined): string {
-  if (wei === undefined) return "0.00";
+  if (wei === undefined) return "$0.00";
   const n = Number(wei) / 1e18;
-  return n < 0.001 ? "0.00" : n.toFixed(2);
+  return `${n < 0.001 ? "0.00" : n.toFixed(2)} CELO`;
 }
 
 export function BalanceCard() {
   const [copied, setCopied] = useState(false);
   const { address, isConnected, shortAddress } = useWallet();
-
   const { data: nativeBal } = useBalance({ address, query: { enabled: !!address } });
-  useReadContracts({
-    contracts: [TOKENS.cUSD, TOKENS.cEUR, TOKENS.cREAL].map((token) => ({
-      address: token.address!,
-      abi: ERC20_BALANCE_ABI,
-      functionName: "balanceOf" as const,
-      args: [address!] as [`0x${string}`],
-    })),
-    query: { enabled: !!address },
-  });
 
   const copyAddress = () => {
     if (!address) return;
@@ -45,13 +24,16 @@ export function BalanceCard() {
   };
 
   return (
-    <div className="balance-card">
-      <div className="balance-label">Total Balance</div>
-      <div className="balance-amount mono">
-        {isConnected ? `${fmt(nativeBal?.value)} CELO` : "$0.00"}
+    <div className="sticky top-16 z-20 flex-shrink-0 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4 py-6 text-center">
+      <div className="text-sm font-semibold uppercase tracking-[1px] text-[var(--color-text-secondary)]">Total Balance</div>
+      <div className="mono mt-1 text-4xl font-bold text-[var(--color-primary)] [text-shadow:2px_2px_0_var(--border-color)]">
+        {isConnected ? fmt(nativeBal?.value) : "$0.00"}
       </div>
       {isConnected && shortAddress && (
-        <button onClick={copyAddress} className="header-action mx-auto mt-3 bg-[var(--color-surface)]">
+        <button
+          onClick={copyAddress}
+          className="mx-auto mt-3 flex items-center gap-2 rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
+        >
           <span className="mono">{shortAddress}</span>
           {copied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} strokeWidth={3} />}
         </button>
