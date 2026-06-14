@@ -10,7 +10,7 @@ export default function SchedulesPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="Schedules" actionLabel="New +" />
-      <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+      <main className="min-h-0 flex-1 overflow-y-auto" style={{ padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
         {schedules.map((schedule) => {
           const Icon = schedule.icon;
           const teal = schedule.iconBg === "var(--color-secondary)";

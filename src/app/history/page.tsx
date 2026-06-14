@@ -6,13 +6,13 @@ export default function HistoryPage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="History" actionLabel="June 2026" />
       <main className="min-h-0 flex-1 overflow-y-auto">
-        <div className="grid grid-cols-3 gap-3 p-4">
+        <div className="grid grid-cols-3" style={{ gap: 12, padding: 16 }}>
           <div className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-secondary)] px-2.5 py-3.5 text-center text-[var(--color-surface)] shadow-[var(--shadow-offset)]"><div className="text-[11px] font-bold uppercase">In</div><div className="mono mt-1 text-lg font-bold">+$850</div></div>
           <div className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-primary)] px-2.5 py-3.5 text-center text-[var(--color-surface)] shadow-[var(--shadow-offset)]"><div className="text-[11px] font-bold uppercase">Out</div><div className="mono mt-1 text-lg font-bold">-$240</div></div>
           <div className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-2.5 py-3.5 text-center shadow-[var(--shadow-offset)]"><div className="text-[11px] font-bold uppercase text-[var(--color-text-secondary)]">Saved</div><div className="mono mt-1 text-lg font-bold">$610</div></div>
         </div>
 
-        <div className="px-4 pb-4">
+        <div style={{ padding: "0 16px 16px" }}>
           <div className="my-3 inline-block -rotate-2 rounded-[12px] border-2 border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1 text-sm font-bold uppercase tracking-[1px]">Today</div>
           <div className="mb-3 flex items-center justify-between rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-3.5 shadow-[var(--shadow-offset)]">
             <div className="flex items-center gap-3.5"><div className="flex h-11 w-11 items-center justify-center rounded-[12px] border-2 border-[var(--border-color)] bg-[var(--color-primary)] text-white"><ArrowUp size={22} strokeWidth={3} /></div><div><div className="text-[15px] font-semibold">Sent to Alice</div><div className="mono mt-0.5 text-xs font-medium text-[var(--color-text-secondary)]">0x7F...3B9A</div></div></div>

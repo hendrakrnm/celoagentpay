@@ -10,10 +10,10 @@ export default function GroupsPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="Groups" actionLabel="New +" />
-      <div className="flex gap-3 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-4">
+      <div className="flex border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)]" style={{ gap: 12, padding: 16 }}>
         {['Active', 'Done', 'Void'].map((tab, index) => <button key={tab} className={`rounded-[12px] border-2 border-[var(--border-color)] px-[18px] py-2 text-[13px] font-bold uppercase shadow-[2px_2px_0_var(--border-color)] ${index === 0 ? 'translate-x-0.5 translate-y-0.5 bg-[var(--color-accent)] shadow-none' : 'bg-[var(--color-surface)]'}`}>{tab}</button>)}
       </div>
-      <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+      <main className="min-h-0 flex-1 overflow-y-auto" style={{ padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
         {groups.map((group) => (
           <article key={group.title} className="rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-[18px] shadow-[var(--shadow-offset)]">
             <div className="mb-4 flex items-start justify-between">

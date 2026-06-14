@@ -13,7 +13,7 @@ interface QuickChipsProps {
 
 export function QuickChips({ onSelect }: QuickChipsProps) {
   return (
-    <div className="flex flex-shrink-0 gap-3 overflow-x-auto bg-[var(--color-bg)] px-4 pb-4 pt-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex flex-shrink-0 overflow-x-auto bg-[var(--color-bg)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ gap: 12, padding: "20px 16px 16px" }}>
       {chips.map((chip) => (
         <button
           key={chip.label}

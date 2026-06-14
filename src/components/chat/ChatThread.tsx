@@ -231,7 +231,7 @@ export function ChatThread() {
       <QuickChips onSelect={handleSendMessage} />
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="flex flex-col gap-5 px-4 py-5">
+        <div className="flex flex-col" style={{ gap: 20, padding: "20px 16px" }}>
         {messages.map((message) => {
           if (message.type === "confirmation" && message.action) {
             const action = message.action;
