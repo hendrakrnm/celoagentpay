@@ -61,3 +61,16 @@ contracts/broadcast/
 .DS_Store
 Thumbs.db
 *.local
+
+# markdown notes
+docs/
+EXECUTION_COMPLETE.md
+BUILD_SUMMARY.md
+firstplan.md
+COMMIT_CONVENTION.md
+DEPLOYMENT_GUIDE.md
+SMART_CONTRACTS.md
+PRODUCT.md
+
+# dummy
+dummy.txt
