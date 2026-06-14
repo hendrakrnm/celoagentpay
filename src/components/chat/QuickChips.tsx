@@ -1,10 +1,10 @@
 "use client";
 
 const chips = [
-  { label: "Send payment", display: "Send", color: "bg-[var(--color-primary)] text-[var(--color-surface)]" },
-  { label: "Receive", display: "Receive", color: "bg-[var(--color-secondary)] text-[var(--color-surface)]" },
-  { label: "Swap", display: "Swap", color: "bg-[var(--color-accent)] text-[var(--border-color)]" },
-  { label: "Check balance", display: "History", color: "bg-[var(--color-surface)] text-[var(--border-color)]" },
+  { label: "Send payment", display: "Send", className: "chip primary" },
+  { label: "Receive", display: "Receive", className: "chip secondary" },
+  { label: "Swap", display: "Swap", className: "chip accent" },
+  { label: "Check balance", display: "History", className: "chip" },
 ];
 
 interface QuickChipsProps {
@@ -13,13 +13,9 @@ interface QuickChipsProps {
 
 export function QuickChips({ onSelect }: QuickChipsProps) {
   return (
-    <div className="flex flex-shrink-0 overflow-x-auto bg-[var(--color-bg)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ gap: 12, padding: "20px 16px 16px" }}>
+    <div className="quick-actions">
       {chips.map((chip) => (
-        <button
-          key={chip.label}
-          onClick={() => onSelect(chip.label)}
-          className={`whitespace-nowrap rounded-[12px] border-[3px] border-[var(--border-color)] px-[18px] py-2 text-sm font-semibold shadow-[var(--shadow-offset)] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none ${chip.color}`}
-        >
+        <button key={chip.label} className={chip.className} onClick={() => onSelect(chip.label)}>
           {chip.display}
         </button>
       ))}

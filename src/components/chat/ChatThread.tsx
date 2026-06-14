@@ -226,12 +226,12 @@ export function ChatThread() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="page">
       <BalanceCard />
       <QuickChips onSelect={handleSendMessage} />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="flex flex-col" style={{ gap: 20, padding: "20px 16px" }}>
+      <div className="page-scroll">
+        <div className="chat-thread">
         {messages.map((message) => {
           if (message.type === "confirmation" && message.action) {
             const action = message.action;
