@@ -226,14 +226,12 @@ export function ChatThread() {
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="page-shell">
       <BalanceCard />
+      <QuickChips onSelect={handleSendMessage} />
 
-      {/* Scrollable message area */}
-      <div
-        className="flex-1 overflow-y-auto min-h-0 py-4 w-full"
-        style={{ background: "var(--color-bg)" }}
-      >
+      <div className="page-scroll">
+        <div className="chat-thread">
         {messages.map((message) => {
           if (message.type === "confirmation" && message.action) {
             const action = message.action;
@@ -278,10 +276,10 @@ export function ChatThread() {
 
           return null;
         })}
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <QuickChips onSelect={handleSendMessage} />
       <CommandInput onSubmit={handleSendMessage} isLoading={isLoading} />
     </div>
   );
