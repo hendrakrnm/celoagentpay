@@ -1,8 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,37 +8,70 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-.env.local
-.env
-.env.example
-
 # next.js
-/.next/
-/out/
+.next/
+out/
+build/
+dist/
 
-# production
-/build
+# testing
+coverage/
 
-# misc
-.DS_Store
+# env / secrets
+.env
+.env.*
+!.env.example
 *.pem
 
-# debug
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 .pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
+*.log
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# foundry generated artifacts
+cache/
+out/
+broadcast/
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+# local tooling / agent plugin dumps
+.claude/
+.agents/
+.gemini/
+.kiro/
+.impeccable/
+.qoder/
 .gstack/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.local
+
+# markdown notes
+docs/
+EXECUTION_COMPLETE.md
+BUILD_SUMMARY.md
+firstplan.md
+COMMIT_CONVENTION.md
+DEPLOYMENT_GUIDE.md
+SMART_CONTRACTS.md
+PRODUCT.md
+frontend_plan.md
+
+# dummy
+dummy.txt

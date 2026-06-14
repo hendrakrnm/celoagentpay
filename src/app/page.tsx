@@ -5,8 +5,8 @@ import { ChatThread } from "@/components/chat";
 
 export default function ChatPage() {
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <PageHeader title="AgentPay" />
+    <div className="flex min-h-0 flex-1 flex-col">
+      <PageHeader title="Wallet" />
       <ChatThread />
     </div>
   );

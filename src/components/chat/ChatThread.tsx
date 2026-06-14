@@ -10,7 +10,7 @@ import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
-import { executeAction, EXPLORER_BASE } from "@/lib/contracts";
+import { executeAction, EXPLORER_BASE, type ExecuteOptions } from "@/lib/contracts";
 
 interface Message {
   id: string;
@@ -173,11 +173,12 @@ export function ChatThread() {
         timestamp: new Date(),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hash = await executeAction(action, {
-        writeContractAsync: writeContractAsync as any,
-        sendTransactionAsync: sendTransactionAsync as any,
-      });
+      const executeOptions: ExecuteOptions = {
+        writeContractAsync: writeContractAsync as unknown as ExecuteOptions["writeContractAsync"],
+        sendTransactionAsync: sendTransactionAsync as unknown as ExecuteOptions["sendTransactionAsync"],
+      };
+
+      const hash = await executeAction(action, executeOptions);
 
       addMessage({
         type: "agent",
@@ -225,14 +226,12 @@ export function ChatThread() {
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="page">
       <BalanceCard />
+      <QuickChips onSelect={handleSendMessage} />
 
-      {/* Scrollable message area */}
-      <div
-        className="flex-1 overflow-y-auto min-h-0 py-4 w-full"
-        style={{ background: "var(--color-bg)" }}
-      >
+      <div className="page-scroll">
+        <div className="chat-thread">
         {messages.map((message) => {
           if (message.type === "confirmation" && message.action) {
             const action = message.action;
@@ -277,10 +276,10 @@ export function ChatThread() {
 
           return null;
         })}
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <QuickChips onSelect={handleSendMessage} />
       <CommandInput onSubmit={handleSendMessage} isLoading={isLoading} />
     </div>
   );

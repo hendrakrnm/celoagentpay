@@ -2,16 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { SYSTEM_PROMPT } from "@/lib/agent";
 
-const client = new OpenAI({
-  baseURL: process.env.GAIA_API_URL || "https://openrouter.ai/api/v1",
-  apiKey: process.env.GAIA_API_KEY || "",
-  defaultHeaders: {
-    "HTTP-Referer": "https://celoagentpay.vercel.app",
-    "X-Title": "CeloAgentPay",
-  },
-});
-
 const MODEL = process.env.GAIA_MODEL || "meta-llama/llama-3.1-8b-instruct";
+
+function createClient() {
+  const apiKey = process.env.GAIA_API_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  return new OpenAI({
+    baseURL: process.env.GAIA_API_URL || "https://openrouter.ai/api/v1",
+    apiKey,
+    defaultHeaders: {
+      "HTTP-Referer": "https://celoagentpay.vercel.app",
+      "X-Title": "CeloAgentPay",
+    },
+  });
+}
 
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
@@ -21,6 +26,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const client = createClient();
+    if (!client) {
+      return NextResponse.json({
+        action: "clarify",
+        message: "AI key is not configured. Set GAIA_API_KEY or OPENAI_API_KEY.",
+      });
+    }
+
     const completion = await client.chat.completions.create({
       model: MODEL,
       messages: [

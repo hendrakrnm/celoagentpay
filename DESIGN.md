@@ -1,257 +1,345 @@
-# Design
+# Agent Wallet Design System: Memphis Style
+
+## Overview
+
+A playful, vibrant, and retro-inspired design system characterized by:
+
+- Bold geometric shapes
+- High-contrast colors
+- Thick borders
+- Hard offset shadows
+
+The interface follows a **mobile-first approach** and uses a **Single-Page Application (SPA)** structure.
+
+---
 
 ## Color Palette
 
-### Primary — Celo Green
-- `--color-primary`: `#1D9E75`
-- `--color-primary-light`: `#E1F5EE`
-- `--color-primary-dark`: `#0F6E56`
+### Core Colors
 
-### Neutral — Warm Gray
-- `--color-bg`: `#FAFAF9`
-- `--color-surface`: `#FFFFFF`
-- `--color-surface-raised`: `#F5F4F2`
-- `--color-border`: `rgba(0, 0, 0, 0.08)`
-- `--color-border-strong`: `rgba(0, 0, 0, 0.15)`
+| Role | Color | Hex |
+|---|---|---|
+| Primary | Rose / Pink | `#e8879f` |
+| Secondary | Teal / Green | `#4db8a8` |
+| Accent | Yellow | `#f5d76e` |
 
-### Text
-- `--color-text-primary`: `#1A1916`
-- `--color-text-secondary`: `#6B6A66`
-- `--color-text-tertiary`: `#9B9A96`
+### Backgrounds and Surfaces
 
-### Semantic
-- `--color-success`: `#16A34A`
-- `--color-success-light`: `#DCFCE7`
-- `--color-warning`: `#D97706`
-- `--color-warning-light`: `#FEF3C7`
-- `--color-danger`: `#DC2626`
-- `--color-danger-light`: `#FEE2E2`
+| Role | Color | Hex |
+|---|---|---|
+| Background | Off-white | `#faf8f5` |
+| Surface | Warm White | `#fffef7` |
 
-### Dark Mode
-- `--color-bg-dark`: `#111110`
-- `--color-surface-dark`: `#1C1C1A`
-- `--color-surface-raised-dark`: `#242422`
-- `--color-border-dark`: `rgba(255, 255, 255, 0.08)`
-- `--color-text-primary-dark`: `#EEEEEC`
-- `--color-text-secondary-dark`: `#9B9A96`
+### Text Colors
+
+| Role | Color | Hex |
+|---|---|---|
+| Primary Text | Dark Navy / Black | `#1a1a2e` |
+| Secondary Text | Muted Navy | `#4a4a68` |
+| Tertiary Text | Light Navy | `#7a7a92` |
+
+### Borders and Shadows
+
+| Role | Color | Hex |
+|---|---|---|
+| Border and Shadow | Dark Navy / Black | `#1a1a2e` |
+
+---
 
 ## Typography
 
 ### Font Stack
-- **Display / Body**: Geist (500 medium, 400 regular)
-- **Mono**: Geist Mono (wallet addresses, TX hashes, amounts)
 
-### Scale
-12 / 14 / 16 / 20 / 24 / 32px only (no in-between sizes)
+- **Primary Font:** `Poppins, sans-serif`
+- **Monospace / Numbers:** `Poppins`
+- Use `tabular-nums` for numerical alignment.
 
-**Weight**: 400 regular, 500 medium only (no 600 or 700)
+### Font Weights
 
-## Spacing
+| Weight | Value | Usage |
+|---|---:|---|
+| Regular | `400` | Body text and placeholders |
+| Medium | `500` | Chat bubbles and list subtitles |
+| Semi-Bold | `600` | Action buttons, primary values, and chips |
+| Bold | `700` | Headers, balance amounts, badges, and schedule titles |
 
-4px base unit: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48px
+---
 
-## Border Radius
+## Design Properties
 
-- Small (badges, tags): `6px`
-- Inputs, buttons, cards: `10px`
-- Large cards, modals: `14px`
-- Pills: `999px`
+### Borders and Shadows
 
-## Shadows
-
-- `--shadow-sm`: `0 1px 2px rgba(0, 0, 0, 0.05)`
-- `--shadow-md`: `0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)`
-- `--shadow-lg`: `0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0, 0, 0, 0.04)`
-
-## Layout
-
-### Page Container
-- `max-width`: `430px`
-- `margin`: `0 auto`
-- `padding-bottom`: `80px` (nav height)
-
-### Header
-- `height`: `56px`
-- No gradient, no colored background — just surface color
-- Subtle bottom border only
-
-### Bottom Navigation
-- Fixed at bottom, 4 tabs
-- `height`: `64px` + safe area inset
-- Background: surface with `backdrop-filter: blur(12px)`
-- Top border: `1px` using `--color-border`
-- Active tab icon/label: `--color-primary`
-- Inactive: `--color-text-tertiary`
-
-## Components
-
-### Button
-**Variants**: primary, ghost, outline, danger
-
-#### Primary
-- Background: `--color-primary`
-- Color: white
-- Border radius: `10px`
-- Active state: `scale(0.98)`
-
-#### Ghost
-- Background: transparent
-- Color: `--color-text-secondary`
-- Border: none
-
-#### Outline
-- Background: transparent
-- Color: `--color-text-secondary`
-- Border: `1px` `--color-border-strong`
-
-#### Danger
-- Background: `--color-danger`
-- Color: white
-- Border radius: `10px`
-
-### Input
-- Height: `48px`
-- Background: `--color-surface-raised`
-- Border: `1px` `--color-border`
-- Focus border: `--color-primary`
-- Border radius: `10px`
-- Label: `12px` / `500` / `--color-text-secondary`
-- Value: `14px` / `400` / `--color-text-primary`
-
-### Badge
-**Variants**: success, warning, danger, neutral, primary
-
-- Height: `20px`
-- Padding: `4px 8px`
-- Border radius: `6px`
-- Font size: `11px` / `500`
-
-### Message Bubble
-
-#### User Message
-- Right-aligned
-- Background: `--color-primary`
-- Text: white, `14px` / `400`
-- Border radius: `14px 14px 4px 14px`
-
-#### Agent Response
-- Left-aligned
-- Background: `--color-surface-raised`
-- Text: `--color-text-primary`, `14px` / `400`
-- Border radius: `14px 14px 14px 4px`
-
-### Transaction Confirmation Card
-- Background: `--color-surface`
-- Border: `1px` `--color-border-strong`
-- Border radius: `14px`
-- Left accent border: `3px` `--color-primary`
-- Label: `12px` / `--color-text-tertiary`
-- Value: `14px` / `500` / `--color-text-primary`
-- Divider: `1px` `--color-border`
-
-### Bottom Sheet
-- Backdrop: `rgba(0, 0, 0, 0.4)`
-- Sheet background: `--color-surface`
-- Drag handle: `36px × 4px`, `--color-border-strong`, centered, rounded
-- Border radius top: `20px`
-- Animation: slide up `300ms cubic-bezier(0.32, 0.72, 0, 1)`
-
-### Toast Notification
-- Width: `340px` max, mobile `90vw`
-- Border radius: `10px`
-- Shadow: `--shadow-md`
-- Auto-dismiss: `3s`
-
-**Variants**:
-- Success: left border `--color-success`
-- Error: left border `--color-danger`
-- Info: left border `--color-primary`
-
-### Skeleton Loading
-- Base color: `--color-surface-raised`
-- Highlight: slightly lighter shade
-- Animation: shimmer across the element
-
-## Motion & Micro-interactions
-
-### Timing
-- Standard transition: `all 150ms ease`
-- Page transition: `opacity 200ms ease, transform 200ms ease`
-- Progress bar fill: `width 800ms cubic-bezier(0.4, 0, 0.2, 1)`
-- Bottom sheet entrance: `transform 300ms cubic-bezier(0.32, 0.72, 0, 1)`
-
-### Key Frames
 ```css
-@keyframes success-pop {
-  0%   { transform: scale(0.95); opacity: 0; }
-  60%  { transform: scale(1.02); }
-  100% { transform: scale(1); opacity: 1; }
-}
+border: 3px solid #1a1a2e;
+border-radius: 12px;
+box-shadow: 4px 4px 0 #1a1a2e;
+```
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+#### Default Properties
 
-@keyframes loading-dots {
-  0%, 20%, 50%, 80%, 100% { opacity: 0.4; }
-  40% { opacity: 1; }
+- **Border Width:** `3px solid`
+- **Border Radius:** `12px`
+- **Shadow:** `4px 4px 0 #1a1a2e`
+- Shadows must be hard and unblurred.
+
+#### Active State
+
+When an element is clicked:
+
+- Compress the shadow to `0 0 0`
+- Translate the element `4px` down
+- Translate the element `4px` to the right
+
+This creates the appearance of a physical button being pressed.
+
+```css
+.element:active {
+  box-shadow: 0 0 0 #1a1a2e;
+  transform: translate(4px, 4px);
 }
 ```
 
-### Rules
-- Button press: `scale(0.98)` on active
-- Card hover: subtle shadow increase (desktop only)
-- No bounce, no spring, no looping animations
-- Agent "thinking" dots: opacity pulse only, no movement
-- Respect `@media (prefers-reduced-motion: reduce)` for all animations
+### Background Texture
 
-## Pages & Templates
+The background uses a CSS polka-dot pattern created with a radial gradient.
 
-### Page 1: Chat Interface `/`
-- Balance card (sticky below header)
-- Message thread (scrollable)
-- Quick action chips (horizontal scroll)
-- Command input bar (fixed bottom, above nav)
+- **Dot Size:** `2px`
+- **Pattern Spacing:** `24px`
 
-### Page 2: History `/history`
-- Header with month selector
-- Summary stats row (3 cards)
-- Transaction list grouped by date
-- Transaction detail bottom sheet
+```css
+background-image: radial-gradient(
+  circle,
+  #1a1a2e 2px,
+  transparent 2px
+);
 
-### Page 3: Groups `/groups`
-- Header + New button
-- Tab filter (Active / Completed / Cancelled)
-- Group cards with progress bar
-- Create group bottom sheet
+background-size: 24px 24px;
+```
 
-### Page 4: Schedules `/schedules`
-- Header + New button
-- Schedule cards (list)
-- Execute now button (when due)
-- Create schedule bottom sheet
+---
 
-## Responsive
+## Components
 
-### Breakpoints
-- Mobile: `360px` minimum (MiniPay target)
-- Tablet: `768px`
-- Desktop: `1024px`
+### Buttons and Chips
 
-### Grid
-- Mobile: `1 column`, full bleed with padding `16px`
-- Tablet+: `max-width 430px`, centered
+#### Ghost Buttons
 
-## Dark Mode
+Ghost buttons use:
 
-All components support dark mode using CSS variables. Light mode is the default; dark mode is activated via `prefers-color-scheme: dark`.
+- Surface-colored background
+- `3px` border
+- Hard offset shadow
+- Accent-colored active state
 
-## Accessibility
+#### Action Chips
 
-- Minimum contrast: `4.5:1` for body text, `3:1` for large text
-- Touch targets: minimum `44px × 44px`
-- Focus indicator: `2px` solid `--color-primary` with `2px` offset
-- No hover-only interactions
-- All form inputs have associated labels
-- Error messages are readable and descriptive
+Action chips use:
+
+- Thick borders
+- Bold text
+- Vibrant background colors
+- Primary, Secondary, or Accent color variants
+
+They are used for quick actions such as:
+
+- Send
+- Receive
+- Swap
+
+#### Send Button
+
+The send button uses:
+
+- Accent-colored background
+- `2px` border
+- `2px` offset shadow
+
+---
+
+### Badges
+
+Badges use the following properties:
+
+- **Height:** `24px`
+- **Text Transform:** Uppercase
+- **Font Size:** `11px`
+- **Font Weight:** Bold
+- **Border:** `2px solid`
+- **Shadow:** `2px` offset
+
+#### Badge Variants
+
+| Variant | Color |
+|---|---|
+| Success | Secondary |
+| Warning | Accent |
+| Active | Primary |
+
+---
+
+### Chat Bubbles
+
+#### User Message
+
+- Primary-colored background
+- Surface-colored text
+- Bottom-right corner has no border radius
+
+#### Agent Message
+
+- Surface-colored background
+- Primary text color
+- Bottom-left corner has no border radius
+
+#### Shared Styling
+
+```css
+border: 3px solid #1a1a2e;
+box-shadow: 4px 4px 0 #1a1a2e;
+```
+
+---
+
+### Cards
+
+Cards are used for:
+
+- Transactions
+- Groups
+- Schedules
+
+#### Container Styling
+
+- Surface-colored background
+- `3px` border
+- `12px` border radius
+- `4px` offset shadow
+
+```css
+.card {
+  background: #fffef7;
+  border: 3px solid #1a1a2e;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #1a1a2e;
+}
+```
+
+#### Interactive State
+
+When clicked, the card:
+
+- Translates down and to the right
+- Flattens its shadow
+
+#### Separators
+
+Use dashed lines to separate rows or card footers.
+
+```css
+border-top: 2px dashed #1a1a2e;
+```
+
+---
+
+### Bottom Navigation
+
+#### Container
+
+The bottom navigation uses:
+
+- Fixed positioning at the bottom
+- `80px` height
+- Surface-colored background
+- Thick top, left, and right borders
+
+#### Navigation Items
+
+- Uppercase text
+- `11px` font size
+- Bold font weight
+
+#### Active State
+
+The active navigation item:
+
+- Changes its icon and text to the Primary color
+- Translates `4px` upward
+
+```css
+.nav-item.active {
+  color: #e8879f;
+  transform: translateY(-4px);
+}
+```
+
+---
+
+## Layout Structure
+
+### Application Container
+
+The main application container uses:
+
+- **Maximum Width:** `430px`
+- Centered positioning on larger screens
+- `3px` borders on the left and right in desktop view
+- `80px` bottom padding for the fixed navigation bar
+
+```css
+.app-container {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+  border-left: 3px solid #1a1a2e;
+  border-right: 3px solid #1a1a2e;
+}
+```
+
+---
+
+## Pages and Views
+
+### Page 1: Chat
+
+The Chat page includes:
+
+- Sticky balance card
+- Horizontally scrolling quick actions
+- Scrollable chat thread
+- Fixed bottom input bar
+
+### Page 2: History
+
+The History page includes:
+
+- Rotated date header
+- Top-level statistical cards:
+  - In
+  - Out
+  - Saved
+- Transaction list categorized by day
+
+### Page 3: Groups
+
+The Groups page includes:
+
+- Tabbed filters:
+  - Active
+  - Done
+  - Void
+- Group cards
+- Custom animated progress bars
+
+### Page 4: Schedules
+
+The Schedules page displays active recurring plans, such as:
+
+- Weekly Rent
+- DCA Ethereum
+
+Each schedule card includes:
+
+- Highlighted **Next Run** date
+- Execute button
+- Recurring plan information

@@ -12,6 +12,18 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local tooling and generated/vendor artifacts:
+    ".agents/**",
+    ".claude/**",
+    ".gemini/**",
+    ".kiro/**",
+    ".impeccable/**",
+    ".qoder/**",
+    "contracts/lib/**",
+    "contracts/cache/**",
+    "contracts/out/**",
+    "contracts/broadcast/**",
+    "cache/**",
   ]),
 ]);
 
