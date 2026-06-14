@@ -24,16 +24,11 @@ export function BalanceCard() {
   };
 
   return (
-    <div className="sticky top-16 z-20 flex-shrink-0 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4 py-6 text-center">
-      <div className="text-sm font-semibold uppercase tracking-[1px] text-[var(--color-text-secondary)]">Total Balance</div>
-      <div className="mono mt-1 text-4xl font-bold text-[var(--color-primary)] [text-shadow:2px_2px_0_var(--border-color)]">
-        {isConnected ? fmt(nativeBal?.value) : "$0.00"}
-      </div>
+    <div className="balance-card">
+      <div className="balance-label">Total Balance</div>
+      <div className="balance-amount mono">{isConnected ? fmt(nativeBal?.value) : "$0.00"}</div>
       {isConnected && shortAddress && (
-        <button
-          onClick={copyAddress}
-          className="mx-auto mt-3 flex items-center gap-2 rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
-        >
+        <button onClick={copyAddress} className="header-action mx-auto mt-3 bg-[var(--color-surface)]">
           <span className="mono">{shortAddress}</span>
           {copied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} strokeWidth={3} />}
         </button>
