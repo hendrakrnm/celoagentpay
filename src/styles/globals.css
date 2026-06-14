@@ -1,61 +1,41 @@
 @import "tailwindcss";
 
-/* ========================================
-   DESIGN TOKENS & CSS VARIABLES
-   ======================================== */
-
 :root {
-  /* Primary — Blue */
-  --color-primary: #2B7FFF;
-  --color-primary-light: #E8F1FF;
-  --color-primary-dark: #1A5FCC;
-
-  /* Background — Light */
-  --color-bg: #EAEDF1;
-  --color-surface: #FFFFFF;
-  --color-surface-raised: #F5F6F8;
-  --color-border: rgba(0, 0, 0, 0.10);
-  --color-border-strong: rgba(0, 0, 0, 0.18);
-
-  /* Text */
-  --color-text-primary: #111111;
-  --color-text-secondary: #5F6368;
-  --color-text-tertiary: #9AA0A6;
-
-  /* Semantic */
-  --color-success: #16A34A;
-  --color-success-light: #DCFCE7;
-  --color-warning: #D97706;
-  --color-warning-light: #FEF3C7;
-  --color-danger: #DC2626;
-  --color-danger-light: #FEE2E2;
-
-  /* Chat bubbles */
-  --bubble-user-bg: #2B7FFF;
-  --bubble-user-text: #FFFFFF;
-  --bubble-agent-bg: #FFFFFF;
-  --bubble-agent-text: #111111;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --color-primary: #e8879f;
+  --color-secondary: #4db8a8;
+  --color-accent: #f5d76e;
+  --color-bg: #faf8f5;
+  --color-surface: #fffef7;
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #4a4a68;
+  --color-text-tertiary: #7a7a92;
+  --color-success: #4db8a8;
+  --color-success-light: #dff5f0;
+  --color-warning: #f5d76e;
+  --color-warning-light: #fff3bd;
+  --color-danger: #e8879f;
+  --color-danger-light: #fde3ea;
+  --border-color: #1a1a2e;
+  --border-width: 3px;
+  --border-radius: 12px;
+  --shadow-offset: 4px 4px 0px var(--border-color);
+  --shadow-active: 0px 0px 0px var(--border-color);
+  --bubble-user-bg: var(--color-primary);
+  --bubble-user-text: var(--color-surface);
+  --bubble-agent-bg: var(--color-surface);
+  --bubble-agent-text: var(--color-text-primary);
 }
-
-/* ========================================
-   TAILWIND THEME OVERRIDE
-   ======================================== */
 
 @theme inline {
   --color-background: var(--color-bg);
   --color-foreground: var(--color-text-primary);
   --color-primary: var(--color-primary);
-  --color-primary-light: var(--color-primary-light);
-  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-light: var(--color-danger-light);
+  --color-primary-dark: var(--border-color);
   --color-surface: var(--color-surface);
-  --color-surface-raised: var(--color-surface-raised);
-  --color-border: var(--color-border);
-  --color-border-strong: var(--color-border-strong);
+  --color-surface-raised: #ffffff;
+  --color-border: var(--border-color);
+  --color-border-strong: var(--border-color);
   --color-text-secondary: var(--color-text-secondary);
   --color-text-tertiary: var(--color-text-tertiary);
   --color-success: var(--color-success);
@@ -64,35 +44,11 @@
   --color-warning-light: var(--color-warning-light);
   --color-danger: var(--color-danger);
   --color-danger-light: var(--color-danger-light);
-  --color-shadow-sm: var(--shadow-sm);
-  --color-shadow-md: var(--shadow-md);
-  --color-shadow-lg: var(--shadow-lg);
-
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-pill: 999px;
-
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-base: 16px;
-  --spacing-lg: 20px;
-  --spacing-xl: 24px;
-  --spacing-2xl: 32px;
-  --spacing-3xl: 48px;
+  --font-sans: var(--font-poppins), var(--font-geist-sans);
+  --font-mono: var(--font-poppins), var(--font-geist-mono);
 }
 
-/* ========================================
-   GLOBAL BASE STYLES
-   ======================================== */
-
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
@@ -102,169 +58,30 @@ html {
 
 body {
   background-color: var(--color-bg);
+  background-image: radial-gradient(rgba(26, 26, 46, 0.1) 2px, transparent 2px);
+  background-size: 24px 24px;
   color: var(--color-text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-poppins), var(--font-geist-sans), sans-serif;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ========================================
-   TYPOGRAPHY UTILITIES
-   ======================================== */
-
-.text-10 {
-  font-size: 10px;
-  line-height: 1.4;
+button,
+input {
+  font: inherit;
 }
 
-.text-11 {
-  font-size: 11px;
-  line-height: 1.4;
+button {
+  cursor: pointer;
 }
 
-.text-12 {
-  font-size: 12px;
-  line-height: 1.4;
+.mono {
+  font-family: var(--font-poppins), var(--font-geist-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
-
-.text-13 {
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.text-14 {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.text-16 {
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.text-20 {
-  font-size: 20px;
-  line-height: 1.6;
-}
-
-.text-24 {
-  font-size: 24px;
-  line-height: 1.6;
-}
-
-.text-32 {
-  font-size: 32px;
-  line-height: 1.7;
-}
-
-.font-regular {
-  font-weight: 400;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-/* ========================================
-   ANIMATIONS
-   ======================================== */
-
-@keyframes success-pop {
-  0% {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes loading-dots {
-  0%, 20%, 50%, 80%, 100% {
-    opacity: 0.4;
-  }
-  40% {
-    opacity: 1;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-success-pop {
-  animation: success-pop 400ms ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-loading-dots {
-  animation: loading-dots 1.4s infinite;
-}
-
-.animate-slide-up {
-  animation: slide-up 300ms cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-/* Respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ========================================
-   FOCUS STYLES
-   ======================================== */
-
-button:focus-visible,
-input:focus-visible,
-a:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
-}
-
-/* ========================================
-   APP SHELL — full-height chat layout
-   ======================================== */
 
 .app-shell {
   display: flex;
@@ -274,11 +91,72 @@ a:focus-visible {
   margin: 0 auto;
   width: 100%;
   overflow: hidden;
+  background: var(--color-bg);
+  border-left: var(--border-width) solid var(--border-color);
+  border-right: var(--border-width) solid var(--border-color);
+  box-shadow: 20px 0 40px rgba(0, 0, 0, 0.05);
 }
 
-/* ========================================
-   SCROLLBAR STYLING
-   ======================================== */
+.memphis-card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-offset);
+}
+
+.memphis-press {
+  transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+}
+
+.memphis-press:active {
+  transform: translate(4px, 4px);
+  box-shadow: var(--shadow-active);
+}
+
+.memphis-soft-press {
+  transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+}
+
+.memphis-soft-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-active);
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loading-dots {
+  0%, 20%, 50%, 80%, 100% { opacity: 0.4; }
+  40% { opacity: 1; }
+}
+
+@keyframes success-pop {
+  0% { transform: scale(0.95); opacity: 0; }
+  60% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-success-pop { animation: success-pop 400ms ease-out; }
+.animate-slide-up { animation: slide-up 300ms cubic-bezier(0.32, 0.72, 0, 1); }
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -286,14 +164,19 @@ a:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-raised);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-strong);
-  border-radius: 3px;
+  background: var(--border-color);
+  border-radius: 999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-tertiary);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

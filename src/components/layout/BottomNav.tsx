@@ -2,38 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, History, Users, RotateCw } from "lucide-react";
+import { CalendarDays, Clock3, MessageCircle, Users } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Chat", icon: MessageCircle },
-  { href: "/history", label: "History", icon: History },
+  { href: "/history", label: "History", icon: Clock3 },
   { href: "/groups", label: "Groups", icon: Users },
-  { href: "/schedules", label: "Schedules", icon: RotateCw },
+  { href: "/schedules", label: "Plans", icon: CalendarDays },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-shrink-0 h-16 flex items-center justify-around px-4 bg-[var(--color-surface)] border-t border-[var(--color-border)]">
+    <nav className="z-40 flex h-20 flex-shrink-0 items-center justify-around border-t-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4 pb-2">
       {navItems.map(({ href, label, icon: Icon }) => {
         const isActive = pathname === href;
         return (
           <Link
             key={href}
             href={href}
-            className={`
-              flex flex-col items-center gap-1 px-4 py-2 rounded-lg
-              min-h-[44px] min-w-[44px] justify-center
-              transition-colors duration-150
-              ${isActive
-                ? "text-blue-600"
-                : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
-              }
-            `}
+            className={`flex min-h-11 min-w-11 flex-col items-center justify-center gap-1 text-[11px] font-bold uppercase transition-transform duration-150 ${
+              isActive ? "-translate-y-1 text-[var(--color-primary)]" : "text-[var(--color-text-tertiary)]"
+            }`}
           >
-            <Icon className="w-6 h-6" />
-            <span className="text-10 font-medium">{label}</span>
+            <Icon className="h-6 w-6" fill={isActive ? "currentColor" : "none"} strokeWidth={2.5} />
+            <span>{label}</span>
           </Link>
         );
       })}

@@ -18,118 +18,43 @@ interface TxConfirmCardProps {
   isLoading?: boolean;
 }
 
-export function TxConfirmCard({
-  action,
-  details,
-  onCancel,
-  onApprove,
-  isLoading = false,
-}: TxConfirmCardProps) {
+export function TxConfirmCard({ action, details, onCancel, onApprove, isLoading = false }: TxConfirmCardProps) {
   return (
-    <div
-      className="
-        mx-4 my-4 p-5
-        rounded-[20px] border border-[var(--color-border)]
-        bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-surface-raised)]
-        shadow-[var(--shadow-lg)]
-        animate-success-pop
-        relative overflow-hidden
-      "
-    >
-      {/* Background Accent */}
-      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[var(--color-primary)] to-transparent" />
-
-      {/* Header with Icon */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center">
-          <CheckCircle className="w-6 h-6 text-[var(--color-primary)]" />
+    <div className="memphis-card animate-success-pop mx-4 my-4 overflow-hidden bg-[var(--color-surface)] p-5">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border-[3px] border-[var(--border-color)] bg-[var(--color-accent)]">
+          <CheckCircle className="h-6 w-6 text-[var(--border-color)]" />
         </div>
         <div>
-          <p className="text-12 text-[var(--color-text-tertiary)] font-medium">
-            Review Transaction
-          </p>
-          <p className="text-14 font-bold text-[var(--color-text-primary)]">
-            {action}
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-text-secondary)]">Review transaction</p>
+          <p className="text-lg font-black uppercase text-[var(--color-text-primary)]">{action}</p>
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="h-px bg-[var(--color-border)] mb-4" />
-
-      {/* Details */}
-      <div className="space-y-3 mb-4">
+      <div className="mb-4 border-y-[3px] border-dashed border-[var(--border-color)]">
         {Object.entries(details).map(([key, value]) => {
           if (value === undefined || value === null) return null;
-
           const isAddress = String(value).startsWith("0x");
-          const formatKey = key.charAt(0).toUpperCase() + key.slice(1);
-
+          const display = isAddress ? `${String(value).slice(0, 6)}...${String(value).slice(-4)}` : value;
           return (
-            <div
-              key={key}
-              className="flex justify-between items-center gap-4 px-2"
-            >
-              <div>
-                <p className="text-12 text-[var(--color-text-tertiary)] font-medium">
-                  {formatKey}
-                </p>
-              </div>
-              <div
-                className={`
-                  text-14 font-bold text-[var(--color-text-primary)]
-                  text-right
-                  px-3 py-2 rounded-[10px]
-                  bg-[var(--color-surface-raised)]
-                  ${isAddress ? "font-mono text-12" : ""}
-                `}
-              >
-                {isAddress ? (
-                  <code>{`${String(value).slice(0, 6)}...${String(value).slice(-4)}`}</code>
-                ) : key === "amount" ? (
-                  <span className="text-[var(--color-primary)]">
-                    {`${Number(value).toFixed(2)}`}
-                    <span className="text-11 text-[var(--color-text-secondary)] ml-1">
-                      cUSD
-                    </span>
-                  </span>
-                ) : (
-                  value
-                )}
-              </div>
+            <div key={key} className="flex items-start justify-between gap-4 border-b-2 border-dashed border-[var(--border-color)] px-1 py-3 last:border-b-0">
+              <span className="text-xs font-bold uppercase tracking-[0.06em] text-[var(--color-text-secondary)]">{key}</span>
+              <span className={`max-w-[60%] text-right text-sm font-bold text-[var(--color-text-primary)] ${isAddress ? "mono" : ""}`}>{display}</span>
             </div>
           );
         })}
       </div>
 
-      {/* Divider */}
-      <div className="h-px bg-[var(--color-border)] mb-4" />
-
-      {/* Warning */}
-      <p className="text-11 text-[var(--color-text-tertiary)] text-center mb-4 px-2">
-        Please review the details carefully before confirming this transaction.
+      <p className="mb-4 text-center text-xs font-semibold text-[var(--color-text-secondary)]">
+        Please review details carefully before confirming.
       </p>
 
-      {/* Buttons */}
-      <div className="flex gap-3 pt-2">
-        <Button
-          variant="outline"
-          size="lg"
-          fullWidth
-          onClick={onCancel}
-          disabled={isLoading}
-        >
+      <div className="flex gap-3">
+        <Button variant="outline" size="lg" fullWidth onClick={onCancel} disabled={isLoading}>
           Cancel
         </Button>
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          onClick={onApprove}
-          loading={isLoading}
-          disabled={isLoading}
-        >
-          {isLoading ? "Confirming..." : "Confirm →"}
+        <Button variant="primary" size="lg" fullWidth onClick={onApprove} loading={isLoading} disabled={isLoading}>
+          {isLoading ? "Confirming" : "Confirm"}
         </Button>
       </div>
     </div>

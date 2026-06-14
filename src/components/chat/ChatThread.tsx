@@ -10,7 +10,7 @@ import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
-import { executeAction, EXPLORER_BASE } from "@/lib/contracts";
+import { executeAction, EXPLORER_BASE, type ExecuteOptions } from "@/lib/contracts";
 
 interface Message {
   id: string;
@@ -173,11 +173,12 @@ export function ChatThread() {
         timestamp: new Date(),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hash = await executeAction(action, {
-        writeContractAsync: writeContractAsync as any,
-        sendTransactionAsync: sendTransactionAsync as any,
-      });
+      const executeOptions: ExecuteOptions = {
+        writeContractAsync: writeContractAsync as unknown as ExecuteOptions["writeContractAsync"],
+        sendTransactionAsync: sendTransactionAsync as unknown as ExecuteOptions["sendTransactionAsync"],
+      };
+
+      const hash = await executeAction(action, executeOptions);
 
       addMessage({
         type: "agent",

@@ -26,13 +26,11 @@ export function BalanceCard() {
   const [copied, setCopied] = useState(false);
   const { address, isConnected, shortAddress } = useWallet();
 
-  // Native CELO balance
   const { data: nativeBal } = useBalance({
     address,
     query: { enabled: !!address },
   });
 
-  // ERC20 balances (cUSD, cEUR, cREAL) in one multicall
   const erc20Tokens = [TOKENS.cUSD, TOKENS.cEUR, TOKENS.cREAL];
   const { data: erc20Results } = useReadContracts({
     contracts: erc20Tokens.map((t) => ({
@@ -53,16 +51,14 @@ export function BalanceCard() {
 
   if (!isConnected || !address) {
     return (
-      <div className="flex-shrink-0 flex items-center justify-center px-4 py-3 bg-white border-b border-[var(--color-border)]">
-        <p className="text-13 text-[var(--color-text-tertiary)]">
-          Connect your wallet to get started
-        </p>
+      <div className="flex-shrink-0 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4 py-5 text-center">
+        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-text-secondary)]">Connect wallet to view balances</p>
       </div>
     );
   }
 
   const balances = [
-    { symbol: "CELO", emoji: "🟡", value: nativeBal?.value },
+    { symbol: "CELO", emoji: "CELO", value: nativeBal?.value },
     ...erc20Tokens.map((t, i) => ({
       symbol: t.symbol,
       emoji: t.emoji,
@@ -71,39 +67,24 @@ export function BalanceCard() {
   ];
 
   return (
-    <div className="flex-shrink-0 bg-white border-b border-[var(--color-border)]">
-      {/* Token balances row */}
-      <div className="flex items-center gap-3 px-4 pt-2 pb-1 overflow-x-auto scrollbar-hide">
+    <div className="flex-shrink-0 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4 py-5 text-center">
+      <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-text-secondary)]">Total Balance</p>
+      <p className="mono mt-1 text-4xl font-bold text-[var(--color-primary)] [text-shadow:2px_2px_0_var(--border-color)]">
+        {fmt(nativeBal?.value)} CELO
+      </p>
+      <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
         {balances.map(({ symbol, emoji, value }) => (
-          <div
-            key={symbol}
-            className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] bg-[var(--color-surface-raised)] border border-[var(--color-border)]"
-          >
-            <span className="text-12">{emoji}</span>
-            <span className="text-13 font-semibold" style={{ color: "var(--color-primary)" }}>
-              {fmt(value)}
-            </span>
-            <span className="text-11 text-[var(--color-text-tertiary)]">{symbol}</span>
+          <div key={symbol} className="memphis-card flex flex-shrink-0 items-center gap-2 px-3 py-2 text-sm">
+            <span>{emoji}</span>
+            <span className="mono text-[var(--border-color)]">{fmt(value)}</span>
+            <span className="text-xs font-bold uppercase text-[var(--color-text-secondary)]">{symbol}</span>
           </div>
         ))}
       </div>
-
-      {/* Address row */}
-      <div className="flex items-center justify-end px-4 pb-2">
-        <button
-          onClick={copyAddress}
-          className="flex items-center gap-1.5 px-2 py-1 rounded-[6px] hover:bg-[var(--color-surface-raised)] transition-colors"
-        >
-          <code className="font-mono text-11 text-[var(--color-text-tertiary)]">
-            {shortAddress}
-          </code>
-          {copied ? (
-            <Check className="w-3 h-3 text-green-500" />
-          ) : (
-            <Copy className="w-3 h-3 text-[var(--color-text-tertiary)]" />
-          )}
-        </button>
-      </div>
+      <button onClick={copyAddress} className="mx-auto mt-3 flex items-center gap-1.5 rounded-[8px] border-2 border-[var(--border-color)] bg-[var(--color-accent)] px-2 py-1 text-xs font-bold uppercase shadow-[2px_2px_0_var(--border-color)]">
+        <code className="mono">{shortAddress}</code>
+        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      </button>
     </div>
   );
 }

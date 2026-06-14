@@ -1,17 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "../styles/globals.css";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Providers } from "@/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,21 +23,16 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1D9E75",
+  themeColor: "#e8879f",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`h-full ${geistSans.variable} ${geistMono.variable} antialiased`}
-    >
+    <html lang="en" className={`h-full ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}>
       <body className="h-full bg-[var(--color-bg)] text-[var(--color-text-primary)]">
         <Providers>
           <div className="app-shell">
-            <main className="flex-1 flex flex-col min-h-0">{children}</main>
+            <main className="flex min-h-0 flex-1 flex-col">{children}</main>
             <BottomNav />
           </div>
         </Providers>

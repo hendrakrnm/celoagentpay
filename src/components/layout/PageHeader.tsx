@@ -1,13 +1,14 @@
 "use client";
 
-import { Wallet, LogOut, AlertTriangle } from "lucide-react";
+import { AlertTriangle, LogOut, Wallet } from "lucide-react";
 import { useWallet } from "@/lib/wallet";
 
 interface PageHeaderProps {
   title: string;
+  actionLabel?: string;
 }
 
-export function PageHeader({ title }: PageHeaderProps) {
+export function PageHeader({ title, actionLabel }: PageHeaderProps) {
   const {
     isConnected,
     isCorrectChain,
@@ -20,20 +21,18 @@ export function PageHeader({ title }: PageHeaderProps) {
   } = useWallet();
 
   return (
-    <header className="flex-shrink-0 h-14 px-4 flex items-center justify-between bg-[var(--color-surface)] border-b border-[var(--color-border)] z-30">
-      <h1 className="text-16 font-semibold text-[var(--color-text-primary)]">
-        {title}
-      </h1>
+    <header className="sticky top-0 z-30 flex h-16 flex-shrink-0 items-center justify-between border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] px-4">
+      <h1 className="text-lg font-bold uppercase tracking-[0.04em] text-[var(--color-text-primary)]">{title}</h1>
 
       <div className="flex items-center gap-2">
         {isConnected && !isCorrectChain && (
           <button
             onClick={switchToCorrectChain}
             disabled={isSwitching}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-12 font-medium bg-amber-50 border border-amber-300 text-amber-700 hover:bg-amber-100 transition-colors"
+            className="memphis-soft-press flex items-center gap-1.5 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-bold uppercase text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
           >
-            <AlertTriangle className="w-3.5 h-3.5" />
-            {isSwitching ? "Switching..." : "Switch to Celo"}
+            <AlertTriangle className="h-3.5 w-3.5" />
+            {isSwitching ? "Switching" : "Celo"}
           </button>
         )}
 
@@ -41,28 +40,25 @@ export function PageHeader({ title }: PageHeaderProps) {
           <button
             onClick={connect}
             disabled={isConnecting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-13 font-medium text-white transition-all active:scale-95"
-            style={{ background: "var(--color-primary)" }}
+            className="memphis-soft-press flex items-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-bold uppercase text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
           >
-            <Wallet className="w-4 h-4" />
-            {isConnecting ? "Connecting..." : "Connect"}
+            <Wallet className="h-4 w-4" />
+            {isConnecting ? "Connecting" : "Connect"}
           </button>
         )}
 
         {isConnected && isCorrectChain && (
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[8px] bg-[var(--color-surface-raised)] border border-[var(--color-border)]">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
-              <code className="font-mono text-11 text-[var(--color-text-secondary)]">
-                {shortAddress}
-              </code>
+            <div className="flex items-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-bold uppercase text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]">
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-color)]" />
+              <span className="mono">{actionLabel ?? shortAddress}</span>
             </div>
             <button
               onClick={() => disconnect()}
-              className="p-1.5 rounded-[8px] text-[var(--color-text-tertiary)] hover:text-red-500 hover:bg-red-50 transition-colors"
+              className="memphis-soft-press rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-1.5 shadow-[2px_2px_0_var(--border-color)]"
               title="Disconnect"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="h-4 w-4" />
             </button>
           </div>
         )}
