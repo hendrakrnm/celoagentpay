@@ -8,7 +8,7 @@ const groups = [
 
 export default function GroupsPage() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-20">
+    <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="Groups" actionLabel="New +" />
       <div className="flex gap-3 border-b-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-4">
         {['Active', 'Done', 'Void'].map((tab, index) => <button key={tab} className={`rounded-[12px] border-2 border-[var(--border-color)] px-[18px] py-2 text-[13px] font-bold uppercase shadow-[2px_2px_0_var(--border-color)] ${index === 0 ? 'translate-x-0.5 translate-y-0.5 bg-[var(--color-accent)] shadow-none' : 'bg-[var(--color-surface)]'}`}>{tab}</button>)}

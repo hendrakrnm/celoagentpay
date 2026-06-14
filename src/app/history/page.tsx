@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 
 export default function HistoryPage() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-20">
+    <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="History" actionLabel="June 2026" />
       <main className="min-h-0 flex-1 overflow-y-auto">
         <div className="grid grid-cols-3 gap-3 p-4">

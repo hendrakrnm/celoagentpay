@@ -226,7 +226,7 @@ export function ChatThread() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-[154px]">
+    <div className="flex min-h-0 flex-1 flex-col">
       <BalanceCard />
       <QuickChips onSelect={handleSendMessage} />
 

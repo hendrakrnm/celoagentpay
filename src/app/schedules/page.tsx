@@ -8,7 +8,7 @@ const schedules = [
 
 export default function SchedulesPage() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-20">
+    <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader title="Schedules" actionLabel="New +" />
       <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
         {schedules.map((schedule) => {
