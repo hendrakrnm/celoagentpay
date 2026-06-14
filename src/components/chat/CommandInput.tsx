@@ -28,7 +28,7 @@ export function CommandInput({ onSubmit, isLoading = false, placeholder = "Type 
   };
 
   return (
-    <div className="absolute bottom-20 left-0 z-30 w-full border-t-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-4">
+    <div className="fixed bottom-20 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 border-x-[3px] border-t-[3px] border-[var(--border-color)] bg-[var(--color-surface)] p-4">
       <div className="flex h-[54px] items-center rounded-[12px] border-[3px] border-[var(--border-color)] bg-[var(--color-surface)] py-0 pl-4 pr-1.5 shadow-[4px_4px_0_rgba(0,0,0,0.1)]">
         <input
           type="text"
