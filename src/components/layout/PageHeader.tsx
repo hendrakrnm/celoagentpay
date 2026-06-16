@@ -31,8 +31,9 @@ export function PageHeader({ title, actionLabel }: PageHeaderProps) {
       <div className="header-title">{title}</div>
 
       {!isConnected && (
-        <button onClick={connect} disabled={isConnecting} className="header-action">
-          <Wallet size={14} strokeWidth={3} /> {text}
+        <button onClick={actionLabel ? undefined : connect} disabled={isConnecting || !!actionLabel} className="header-action">
+          {!actionLabel && <Wallet size={14} strokeWidth={3} />}
+          {text}
         </button>
       )}
 
@@ -44,7 +45,7 @@ export function PageHeader({ title, actionLabel }: PageHeaderProps) {
 
       {isConnected && isCorrectChain && (
         <div className="flex items-center gap-2">
-          <div className="header-action"><span className="dot" /> {text}</div>
+          <div className="header-action">{!actionLabel && <span className="dot" />} {text}</div>
           {!actionLabel && (
             <button onClick={() => disconnect()} title="Disconnect" className="header-action bg-[var(--color-surface)] px-2">
               <LogOut size={14} strokeWidth={3} />
