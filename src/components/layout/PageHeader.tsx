@@ -6,9 +6,10 @@ import { useWallet } from "@/lib/wallet";
 interface PageHeaderProps {
   title: string;
   actionLabel?: string;
+  onAction?: () => void;
 }
 
-export function PageHeader({ title, actionLabel }: PageHeaderProps) {
+export function PageHeader({ title, actionLabel, onAction }: PageHeaderProps) {
   const {
     isConnected,
     isCorrectChain,
@@ -24,35 +25,47 @@ export function PageHeader({ title, actionLabel }: PageHeaderProps) {
     ? "Connecting"
     : isSwitching
       ? "Switching"
-      : actionLabel ?? shortAddress ?? "Connect";
+      : shortAddress ?? "Connect";
 
   return (
     <header className="header">
       <div className="header-title">{title}</div>
 
-      {!isConnected && (
-        <button onClick={actionLabel ? undefined : connect} disabled={isConnecting || !!actionLabel} className="header-action">
-          {!actionLabel && <Wallet size={14} strokeWidth={3} />}
-          {text}
-        </button>
-      )}
+      <div className="flex items-center gap-2">
+        {actionLabel && (
+          onAction ? (
+            <button onClick={onAction} className="header-action">
+              {actionLabel}
+            </button>
+          ) : (
+            <div className="header-action">
+              {actionLabel}
+            </div>
+          )
+        )}
 
-      {isConnected && !isCorrectChain && (
-        <button onClick={switchToCorrectChain} disabled={isSwitching} className="header-action">
-          <AlertTriangle size={14} strokeWidth={3} /> {text}
-        </button>
-      )}
+        {!isConnected && (
+          <button onClick={connect} disabled={isConnecting} className="header-action">
+            <Wallet size={14} strokeWidth={3} />
+            {text}
+          </button>
+        )}
 
-      {isConnected && isCorrectChain && (
-        <div className="flex items-center gap-2">
-          <div className="header-action">{!actionLabel && <span className="dot" />} {text}</div>
-          {!actionLabel && (
+        {isConnected && !isCorrectChain && (
+          <button onClick={switchToCorrectChain} disabled={isSwitching} className="header-action">
+            <AlertTriangle size={14} strokeWidth={3} /> {text}
+          </button>
+        )}
+
+        {isConnected && isCorrectChain && (
+          <div className="flex items-center gap-2">
+            <div className="header-action"><span className="dot" /> {text}</div>
             <button onClick={() => disconnect()} title="Disconnect" className="header-action bg-[var(--color-surface)] px-2">
               <LogOut size={14} strokeWidth={3} />
             </button>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </header>
   );
 }
