@@ -55,6 +55,66 @@ export const GROUP_PAYMENT_ABI = [
     ],
     outputs: [],
   },
+  {
+    name: "groupCount",
+    type: "function",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    name: "getGroup",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "groupId", type: "uint256" }],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        components: [
+          { name: "initiator", type: "address" },
+          { name: "recipient", type: "address" },
+          { name: "targetAmount", type: "uint256" },
+          { name: "collectedAmount", type: "uint256" },
+          { name: "description", type: "string" },
+          { name: "status", type: "uint8" },
+          { name: "createdAt", type: "uint256" },
+          { name: "deadline", type: "uint256" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "getContributors",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "groupId", type: "uint256" }],
+    outputs: [{ name: "", type: "address[]" }],
+  },
+  {
+    name: "getContribution",
+    type: "function",
+    stateMutability: "view",
+    inputs: [
+      { name: "groupId", type: "uint256" },
+      { name: "contributor", type: "address" },
+    ],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    name: "finalize",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "groupId", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    name: "cancel",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "groupId", type: "uint256" }],
+    outputs: [],
+  },
 ] as const;
 
 export const PAYMENT_SCHEDULER_ABI = [
