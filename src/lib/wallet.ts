@@ -33,7 +33,25 @@ export function useWallet() {
   // Auto-connect MiniPay on load (MiniPay auto-injects, just needs connect)
   const connectWallet = () => {
     const injected = connectors.find((c) => c.id === "injected");
-    if (injected) connect({ connector: injected });
+    if (injected) {
+      if (typeof window !== "undefined" && !(window as any).ethereum) {
+        alert(
+          "No Web3 wallet detected. If you are on desktop, please install MetaMask or another wallet extension. If you are on mobile, please open this app inside Opera Mini (MiniPay) or a Celo-compatible wallet browser."
+        );
+        return;
+      }
+      connect(
+        { connector: injected },
+        {
+          onError(err) {
+            console.error("Connection error:", err);
+            alert(`Failed to connect: ${err.message}`);
+          },
+        }
+      );
+    } else {
+      alert("Injected wallet connector not found.");
+    }
   };
 
   const switchToCorrectChain = () => {
