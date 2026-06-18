@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "CeloPay Agent",
   description: "AI-powered payment assistant for MiniPay.",
   icons: { icon: "/favicon.ico" },
+  other: {
+    "talentapp:project_verification":
+      "26e0b6ee8261996ced4725fb4019003e9c073066ae39b498a825f330902902aaaa0e6add99a89ab89ea1200948a79a1d2cd75037b4dd6f415d0911c2d1de8b79",
+  },
 };
 
 export const viewport: Viewport = {
