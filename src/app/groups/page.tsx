@@ -738,10 +738,10 @@ export default function GroupsPage() {
                     <div
                       key={s}
                       className={`h-2 rounded-full transition-all duration-300 ${step === s
-                          ? "w-6 bg-[var(--color-primary)]"
-                          : step > s
-                            ? "w-2 bg-[var(--color-secondary)]"
-                            : "w-2 bg-[var(--border-color)] opacity-20"
+                        ? "w-6 bg-[var(--color-primary)]"
+                        : step > s
+                          ? "w-2 bg-[var(--color-secondary)]"
+                          : "w-2 bg-[var(--border-color)] opacity-20"
                         }`}
                     />
                   ))}
