@@ -90,7 +90,7 @@ export function ChatThread() {
   const { messages, setMessages, isLoading, setIsLoading } = useChat();
 
   const [inputValue, setInputValue] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleSelectChip = (chipLabel: string) => {
