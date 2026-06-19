@@ -63,13 +63,6 @@ function buildConfirmDetails(action: AgentAction): Record<string, string | numbe
       Memo: action.params.memo,
     };
   }
-  if (action.action === "swap") {
-    return {
-      From: `${action.params.amount} ${action.params.fromToken}`,
-      To: `${(action.params.amount * 0.995).toFixed(4)} ${action.params.toToken}`,
-      "Est. Rate": `1 ${action.params.fromToken} = ~0.995 ${action.params.toToken}`,
-    };
-  }
   return {};
 }
 
@@ -82,7 +75,6 @@ function actionLabel(action: AgentAction): string {
     createSchedule: "Schedule Payment",
     getBalance: "Check Balance",
     getHistory: "Payment History",
-    swap: "Swap Tokens",
   };
   return labels[action.action] ?? action.action;
 }
@@ -115,14 +107,6 @@ export function ChatThread() {
 
     if (chipLabel === "send") {
       setInputValue("send 5 cUSD to ");
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50);
-      return;
-    }
-
-    if (chipLabel === "swap") {
-      setInputValue("swap 5 CELO to cUSD");
       setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
@@ -209,34 +193,6 @@ export function ChatThread() {
     );
 
     try {
-      if (action.action === "swap") {
-        addMessage({
-          type: "agent",
-          content: `Initiating swap of ${action.params.amount} ${action.params.fromToken} to ${action.params.toToken}...`,
-          timestamp: new Date(),
-        });
-
-        // Simulate network delay for swap
-        await new Promise((resolve) => setTimeout(resolve, 2500));
-
-        // Generate a random mock tx hash
-        const mockHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-        const explorerUrl = `${EXPLORER_BASE}/tx/${mockHash}`;
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === messageId ? { ...m, txHash: mockHash, explorerUrl } : m
-          )
-        );
-
-        addMessage({
-          type: "agent",
-          content: `Successfully swapped ${action.params.amount} ${action.params.fromToken} for ${(action.params.amount * 0.995).toFixed(4)} ${action.params.toToken} on Ubeswap! View on explorer:\n${explorerUrl}`,
-          timestamp: new Date(),
-        });
-        return;
-      }
-
       const tokenSymbol =
         "params" in action && action.params && "token" in action.params
           ? (action.params.token as string) || "cUSD"

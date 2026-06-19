@@ -3,7 +3,6 @@
 const chips = [
   { label: "send", display: "Send", className: "chip primary" },
   { label: "receive", display: "Receive", className: "chip secondary" },
-  { label: "swap", display: "Swap", className: "chip accent" },
   { label: "history", display: "History", className: "chip" },
 ];
 
