@@ -13,16 +13,7 @@ import { TxSuccessCard } from "./TxSuccessCard";
 import { ReceiveCard } from "./ReceiveCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
 import { executeAction, EXPLORER_BASE, type ExecuteOptions } from "@/lib/contracts";
-
-interface Message {
-  id: string;
-  type: "user" | "agent" | "agent-loading" | "confirmation" | "success" | "receive";
-  content?: string;
-  timestamp?: Date;
-  action?: AgentAction;
-  txHash?: string;
-  explorerUrl?: string;
-}
+import { useChat, type Message } from "@/providers/ChatProvider";
 
 function buildConfirmDetails(action: AgentAction): Record<string, string | number | undefined> {
   if (action.action === "sendPayment") {
@@ -84,17 +75,8 @@ export function ChatThread() {
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
   const router = useRouter();
+  const { messages, setMessages, isLoading, setIsLoading } = useChat();
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      type: "agent",
-      content: "Hi! I'm your CeloPay Agent. Connect your wallet and tell me what you'd like to do.\n\nTry: \"send 5 cUSD to 0x123... for lunch\" or \"check my balance\"",
-      timestamp: new Date(),
-    },
-  ]);
-
-  const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -129,6 +111,7 @@ export function ChatThread() {
   };
 
   const handleSendMessage = async (text: string) => {
+    setInputValue("");
     if (!isConnected) {
       addMessage({ type: "agent", content: "Please connect your wallet first.", timestamp: new Date() });
       return;
@@ -263,61 +246,61 @@ export function ChatThread() {
 
       <div className="page-scroll">
         <div className="chat-thread">
-        {messages.map((message) => {
-          if (message.type === "receive") {
-            return (
-              <ReceiveCard
-                key={message.id}
-                address={address}
-                isConnected={isConnected}
-                onConnect={connect}
-              />
-            );
-          }
-
-          if (message.type === "confirmation" && message.action) {
-            const action = message.action;
-            if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
-              return null;
+          {messages.map((message) => {
+            if (message.type === "receive") {
+              return (
+                <ReceiveCard
+                  key={message.id}
+                  address={address}
+                  isConnected={isConnected}
+                  onConnect={connect}
+                />
+              );
             }
-            return (
-              <TxConfirmCard
-                key={message.id}
-                action={actionLabel(action)}
-                details={buildConfirmDetails(action)}
-                onCancel={() =>
-                  setMessages((prev) => prev.filter((m) => m.id !== message.id))
-                }
-                onApprove={() => handleApprove(message.id, action)}
-              />
-            );
-          }
 
-          if (message.type === "success") {
-            return (
-              <TxSuccessCard
-                key={message.id}
-                title="Transaction Submitted"
-                details="Waiting for confirmation on Celo"
-                txHash={message.txHash}
-                explorerUrl={message.explorerUrl}
-              />
-            );
-          }
+            if (message.type === "confirmation" && message.action) {
+              const action = message.action;
+              if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
+                return null;
+              }
+              return (
+                <TxConfirmCard
+                  key={message.id}
+                  action={actionLabel(action)}
+                  details={buildConfirmDetails(action)}
+                  onCancel={() =>
+                    setMessages((prev) => prev.filter((m) => m.id !== message.id))
+                  }
+                  onApprove={() => handleApprove(message.id, action)}
+                />
+              );
+            }
 
-          if (message.type === "agent-loading" || message.type === "user" || message.type === "agent") {
-            return (
-              <MessageBubble
-                key={message.id}
-                type={message.type as "user" | "agent" | "agent-loading"}
-                content={message.content || ""}
-                timestamp={message.timestamp}
-              />
-            );
-          }
+            if (message.type === "success") {
+              return (
+                <TxSuccessCard
+                  key={message.id}
+                  title="Transaction Submitted"
+                  details="Waiting for confirmation on Celo"
+                  txHash={message.txHash}
+                  explorerUrl={message.explorerUrl}
+                />
+              );
+            }
 
-          return null;
-        })}
+            if (message.type === "agent-loading" || message.type === "user" || message.type === "agent") {
+              return (
+                <MessageBubble
+                  key={message.id}
+                  type={message.type as "user" | "agent" | "agent-loading"}
+                  content={message.content || ""}
+                  timestamp={message.timestamp}
+                />
+              );
+            }
+
+            return null;
+          })}
           <div ref={messagesEndRef} />
         </div>
       </div>
