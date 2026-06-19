@@ -66,8 +66,20 @@ function actionLabel(action: AgentAction): string {
     createSchedule: "Schedule Payment",
     getBalance: "Check Balance",
     getHistory: "Payment History",
+    receive: "Receive Payment",
   };
   return labels[action.action] ?? action.action;
+}
+
+function getConfirmButtonLabel(actionType: string): string {
+  const labels: Record<string, string> = {
+    sendPayment: "Confirm & Send",
+    batchSend: "Confirm & Split",
+    createGroup: "Confirm & Create",
+    contribute: "Confirm & Contribute",
+    createSchedule: "Confirm & Schedule",
+  };
+  return labels[actionType] ?? "Confirm";
 }
 
 export function ChatThread() {
@@ -150,6 +162,12 @@ export function ChatThread() {
           timestamp: new Date(),
         });
 
+      } else if (result.action === "receive") {
+        addMessage({
+          type: "receive",
+          timestamp: new Date(),
+        });
+
       } else {
         // Show confirmation card for all write actions
         addMessage({ type: "confirmation", action: result });
@@ -176,14 +194,26 @@ export function ChatThread() {
     );
 
     try {
-      const tokenSymbol =
-        "params" in action && action.params && "token" in action.params
-          ? (action.params.token as string) || "cUSD"
-          : "cUSD";
+      let approveMessage = "Submitting transaction... (check your wallet)";
+      if (action.action === "createGroup") {
+        approveMessage = "Creating payment group... (check your wallet)";
+      } else if (action.action === "sendPayment") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Sending ${token} payment... (check your wallet)`;
+      } else if (action.action === "contribute") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend to contribute to group... (check your wallet)`;
+      } else if (action.action === "createSchedule") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend to schedule payment... (check your wallet)`;
+      } else {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend... (check your wallet)`;
+      }
 
       addMessage({
         type: "agent",
-        content: `Approving ${tokenSymbol} spend... (check your wallet)`,
+        content: approveMessage,
         timestamp: new Date(),
       });
 
@@ -260,7 +290,7 @@ export function ChatThread() {
 
             if (message.type === "confirmation" && message.action) {
               const action = message.action;
-              if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
+              if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory" || action.action === "receive") {
                 return null;
               }
               return (
@@ -268,6 +298,7 @@ export function ChatThread() {
                   key={message.id}
                   action={actionLabel(action)}
                   details={buildConfirmDetails(action)}
+                  buttonLabel={getConfirmButtonLabel(action.action)}
                   onCancel={() =>
                     setMessages((prev) => prev.filter((m) => m.id !== message.id))
                   }

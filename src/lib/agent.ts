@@ -6,6 +6,7 @@ export type AgentAction =
   | { action: "createSchedule"; params: { recipient: string; amount: number; intervalDays: number; memo: string; token: string } }
   | { action: "getBalance"; params: { token?: string } }
   | { action: "getHistory"; params: Record<string, never> }
+  | { action: "receive"; params?: Record<string, never> }
   | { action: "clarify"; message: string };
 
 const SYSTEM_PROMPT = `You are a crypto payment assistant for Celo blockchain. Parse the user's message and return ONLY a valid JSON object — no explanation, no markdown, no code blocks.
@@ -20,6 +21,7 @@ Supported actions:
 - createSchedule: set up a recurring payment
 - getBalance: check wallet balance (optionally for a specific token)
 - getHistory: show recent transactions
+- receive: request payment, receive tokens, or display user's wallet address and QR code
 
 JSON schema to return:
 {
@@ -69,7 +71,7 @@ Rules:
 - detect token from message: "5 CELO" → CELO, "10 cEUR" → cEUR, "2 cREAL" → cREAL, default → cUSD
 - if user says "split X between A, B, C" → batchSend with equal amounts
 - if user says "every week/month/day" → createSchedule with intervalDays
-- if the user wants to receive or request money FROM someone else (e.g. "receive X from 0x...", "request X from 0x...", "minta/terima X dari 0x..."), do NOT parse it as sendPayment. Instead, return a clarify action with a friendly message explaining that due to blockchain security, they cannot directly pull tokens from another user's wallet. Suggest they click the "Receive" button at the top of the chat page to display their own address/QR code to share with the sender.
+- if the user wants to receive money, request payment, or show their QR code/address (e.g. "receive 10 CELO from 0x...", "minta 5 cUSD dari 0x...", "request payment", "show address", "terima uang") → return action: "receive"
 - respond in the same language the user used`;
 
 export async function parseIntent(userMessage: string): Promise<AgentAction> {
