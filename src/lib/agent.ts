@@ -6,6 +6,7 @@ export type AgentAction =
   | { action: "createSchedule"; params: { recipient: string; amount: number; intervalDays: number; memo: string; token: string } }
   | { action: "getBalance"; params: { token?: string } }
   | { action: "getHistory"; params: Record<string, never> }
+  | { action: "swap"; params: { fromToken: string; toToken: string; amount: number } }
   | { action: "clarify"; message: string };
 
 const SYSTEM_PROMPT = `You are a crypto payment assistant for Celo blockchain. Parse the user's message and return ONLY a valid JSON object — no explanation, no markdown, no code blocks.
@@ -20,6 +21,7 @@ Supported actions:
 - createSchedule: set up a recurring payment
 - getBalance: check wallet balance (optionally for a specific token)
 - getHistory: show recent transactions
+- swap: swap one token for another
 
 JSON schema to return:
 {
@@ -55,7 +57,12 @@ JSON schema to return:
     "token": "<CELO|cUSD|cEUR|cREAL>",
 
     // getBalance (optional):
-    "token": "<CELO|cUSD|cEUR|cREAL>"
+    "token": "<CELO|cUSD|cEUR|cREAL>",
+
+    // swap:
+    "fromToken": "<CELO|cUSD|cEUR|cREAL>",
+    "toToken": "<CELO|cUSD|cEUR|cREAL>",
+    "amount": <number>
   },
   "confidence": <0.0 to 1.0>
 }
@@ -69,6 +76,7 @@ Rules:
 - detect token from message: "5 CELO" → CELO, "10 cEUR" → cEUR, "2 cREAL" → cREAL, default → cUSD
 - if user says "split X between A, B, C" → batchSend with equal amounts
 - if user says "every week/month/day" → createSchedule with intervalDays
+- if user says "swap/convert/tukar X [tokenA] to/into/ke [tokenB]" → swap with fromToken, toToken, and amount
 - respond in the same language the user used`;
 
 export async function parseIntent(userMessage: string): Promise<AgentAction> {

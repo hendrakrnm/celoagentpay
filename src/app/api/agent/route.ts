@@ -75,6 +75,7 @@ function normalizeAgentAction(parsed: any): any {
   else if (actionLower === "createschedule") result.action = "createSchedule";
   else if (actionLower === "getbalance") result.action = "getBalance";
   else if (actionLower === "gethistory") result.action = "getHistory";
+  else if (actionLower === "swap") result.action = "swap";
   else if (actionLower === "clarify") result.action = "clarify";
 
   if (paramsValue && typeof paramsValue === "object") {
@@ -133,15 +134,37 @@ function normalizeAgentAction(parsed: any): any {
       result.params = {
         token: paramsLower.token,
       };
+    } else if (result.action === "swap") {
+      result.params = {
+        fromToken: paramsLower.fromtoken || paramsLower.from || "",
+        toToken: paramsLower.totoken || paramsLower.to || "",
+        amount: Number(paramsLower.amount || 0),
+      };
     }
   }
 
-  if (result.params && typeof result.params.token === "string") {
-    const t = result.params.token.toUpperCase();
-    if (t === "CELO") result.params.token = "CELO";
-    else if (t === "CUSD") result.params.token = "cUSD";
-    else if (t === "CEUR") result.params.token = "cEUR";
-    else if (t === "CREAL") result.params.token = "cREAL";
+  if (result.params) {
+    if (typeof result.params.token === "string") {
+      const t = result.params.token.toUpperCase();
+      if (t === "CELO") result.params.token = "CELO";
+      else if (t === "CUSD") result.params.token = "cUSD";
+      else if (t === "CEUR") result.params.token = "cEUR";
+      else if (t === "CREAL") result.params.token = "cREAL";
+    }
+    if (typeof result.params.fromToken === "string") {
+      const t = result.params.fromToken.toUpperCase();
+      if (t === "CELO") result.params.fromToken = "CELO";
+      else if (t === "CUSD") result.params.fromToken = "cUSD";
+      else if (t === "CEUR") result.params.fromToken = "cEUR";
+      else if (t === "CREAL") result.params.fromToken = "cREAL";
+    }
+    if (typeof result.params.toToken === "string") {
+      const t = result.params.toToken.toUpperCase();
+      if (t === "CELO") result.params.toToken = "CELO";
+      else if (t === "CUSD") result.params.toToken = "cUSD";
+      else if (t === "CEUR") result.params.toToken = "cEUR";
+      else if (t === "CREAL") result.params.toToken = "cREAL";
+    }
   }
 
   if (result.action === "clarify") {
