@@ -69,6 +69,7 @@ Rules:
 - detect token from message: "5 CELO" → CELO, "10 cEUR" → cEUR, "2 cREAL" → cREAL, default → cUSD
 - if user says "split X between A, B, C" → batchSend with equal amounts
 - if user says "every week/month/day" → createSchedule with intervalDays
+- if the user wants to receive or request money FROM someone else (e.g. "receive X from 0x...", "request X from 0x...", "minta/terima X dari 0x..."), do NOT parse it as sendPayment. Instead, return a clarify action with a friendly message explaining that due to blockchain security, they cannot directly pull tokens from another user's wallet. Suggest they click the "Receive" button at the top of the chat page to display their own address/QR code to share with the sender.
 - respond in the same language the user used`;
 
 export async function parseIntent(userMessage: string): Promise<AgentAction> {
