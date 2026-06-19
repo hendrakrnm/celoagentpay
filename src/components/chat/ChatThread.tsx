@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useWriteContract, useSendTransaction } from "wagmi";
 import { useWallet } from "@/lib/wallet";
 import { BalanceCard } from "./BalanceCard";
@@ -9,12 +10,13 @@ import { QuickChips } from "./QuickChips";
 import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
+import { ReceiveCard } from "./ReceiveCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
 import { executeAction, EXPLORER_BASE, type ExecuteOptions } from "@/lib/contracts";
 
 interface Message {
   id: string;
-  type: "user" | "agent" | "agent-loading" | "confirmation" | "success";
+  type: "user" | "agent" | "agent-loading" | "confirmation" | "success" | "receive";
   content?: string;
   timestamp?: Date;
   action?: AgentAction;
@@ -61,6 +63,13 @@ function buildConfirmDetails(action: AgentAction): Record<string, string | numbe
       Memo: action.params.memo,
     };
   }
+  if (action.action === "swap") {
+    return {
+      From: `${action.params.amount} ${action.params.fromToken}`,
+      To: `${(action.params.amount * 0.995).toFixed(4)} ${action.params.toToken}`,
+      "Est. Rate": `1 ${action.params.fromToken} = ~0.995 ${action.params.toToken}`,
+    };
+  }
   return {};
 }
 
@@ -73,14 +82,16 @@ function actionLabel(action: AgentAction): string {
     createSchedule: "Schedule Payment",
     getBalance: "Check Balance",
     getHistory: "Payment History",
+    swap: "Swap Tokens",
   };
   return labels[action.action] ?? action.action;
 }
 
 export function ChatThread() {
-  const { address, isConnected, isReady, publicClient, switchToCorrectChain } = useWallet();
+  const { address, isConnected, isReady, publicClient, switchToCorrectChain, connect } = useWallet();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
+  const router = useRouter();
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -92,11 +103,42 @@ export function ChatThread() {
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const handleSelectChip = (chipLabel: string) => {
+    if (chipLabel === "history") {
+      router.push("/history");
+      return;
+    }
+
+    if (chipLabel === "send") {
+      setInputValue("send 5 cUSD to ");
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return;
+    }
+
+    if (chipLabel === "swap") {
+      setInputValue("swap 5 CELO to cUSD");
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return;
+    }
+
+    if (chipLabel === "receive") {
+      addMessage({
+        type: "receive",
+        timestamp: new Date(),
+      });
+      return;
+    }
+
+    handleSendMessage(chipLabel);
+  };
 
   const addMessage = (msg: Omit<Message, "id">) => {
     setMessages((prev) => [...prev, { id: Date.now().toString() + Math.random(), ...msg }]);
@@ -167,9 +209,42 @@ export function ChatThread() {
     );
 
     try {
+      if (action.action === "swap") {
+        addMessage({
+          type: "agent",
+          content: `Initiating swap of ${action.params.amount} ${action.params.fromToken} to ${action.params.toToken}...`,
+          timestamp: new Date(),
+        });
+
+        // Simulate network delay for swap
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+
+        // Generate a random mock tx hash
+        const mockHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+        const explorerUrl = `${EXPLORER_BASE}/tx/${mockHash}`;
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === messageId ? { ...m, txHash: mockHash, explorerUrl } : m
+          )
+        );
+
+        addMessage({
+          type: "agent",
+          content: `Successfully swapped ${action.params.amount} ${action.params.fromToken} for ${(action.params.amount * 0.995).toFixed(4)} ${action.params.toToken} on Ubeswap! View on explorer:\n${explorerUrl}`,
+          timestamp: new Date(),
+        });
+        return;
+      }
+
+      const tokenSymbol =
+        "params" in action && action.params && "token" in action.params
+          ? (action.params.token as string) || "cUSD"
+          : "cUSD";
+
       addMessage({
         type: "agent",
-        content: "Approving cUSD spend... (check your wallet)",
+        content: `Approving ${tokenSymbol} spend... (check your wallet)`,
         timestamp: new Date(),
       });
 
@@ -228,11 +303,22 @@ export function ChatThread() {
   return (
     <div className="page">
       <BalanceCard />
-      <QuickChips onSelect={handleSendMessage} />
+      <QuickChips onSelect={handleSelectChip} />
 
       <div className="page-scroll">
         <div className="chat-thread">
         {messages.map((message) => {
+          if (message.type === "receive") {
+            return (
+              <ReceiveCard
+                key={message.id}
+                address={address}
+                isConnected={isConnected}
+                onConnect={connect}
+              />
+            );
+          }
+
           if (message.type === "confirmation" && message.action) {
             const action = message.action;
             if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
@@ -280,7 +366,13 @@ export function ChatThread() {
         </div>
       </div>
 
-      <CommandInput onSubmit={handleSendMessage} isLoading={isLoading} />
+      <CommandInput
+        onSubmit={handleSendMessage}
+        isLoading={isLoading}
+        value={inputValue}
+        onChange={setInputValue}
+        inputRef={inputRef}
+      />
     </div>
   );
 }
