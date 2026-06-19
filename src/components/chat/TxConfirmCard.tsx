@@ -12,6 +12,7 @@ interface TxConfirmCardProps {
   onCancel: () => void;
   onApprove: () => void;
   isLoading?: boolean;
+  buttonLabel?: string;
 }
 
 function formatValue(key: string, value: string | number): string {
@@ -21,7 +22,14 @@ function formatValue(key: string, value: string | number): string {
   return raw;
 }
 
-export function TxConfirmCard({ action, details, onCancel, onApprove, isLoading = false }: TxConfirmCardProps) {
+export function TxConfirmCard({
+  action,
+  details,
+  onCancel,
+  onApprove,
+  isLoading = false,
+  buttonLabel = "Confirm & Send",
+}: TxConfirmCardProps) {
   return (
     <div className="message-wrapper agent">
       <div className="message-bubble">Got it! Review the transaction details below before we blast off.</div>
@@ -31,7 +39,7 @@ export function TxConfirmCard({ action, details, onCancel, onApprove, isLoading 
           <div className="tx-row" key={key}><span className="tx-label">{key}</span><span className="tx-value mono">{formatValue(key, value)}</span></div>
         ))}
         <div className="tx-row"><span className="tx-label">Fee</span><span className="tx-value mono">~0.001 CELO</span></div>
-        <button className="tx-action" onClick={onApprove} disabled={isLoading}>{isLoading ? "Confirming..." : "Confirm & Send"}</button>
+        <button className="tx-action" onClick={onApprove} disabled={isLoading}>{isLoading ? "Confirming..." : buttonLabel}</button>
         <button className="tx-action bg-[var(--color-surface)] text-[var(--border-color)]" onClick={onCancel} disabled={isLoading}>Cancel</button>
       </div>
     </div>

@@ -1,10 +1,9 @@
 "use client";
 
 const chips = [
-  { label: "Send payment", display: "Send", className: "chip primary" },
-  { label: "Receive", display: "Receive", className: "chip secondary" },
-  { label: "Swap", display: "Swap", className: "chip accent" },
-  { label: "Check balance", display: "History", className: "chip" },
+  { label: "send", display: "Send", className: "chip primary" },
+  { label: "receive", display: "Receive", className: "chip secondary" },
+  { label: "history", display: "History", className: "chip" },
 ];
 
 interface QuickChipsProps {

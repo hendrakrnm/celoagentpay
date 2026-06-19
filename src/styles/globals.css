@@ -249,6 +249,9 @@ button { cursor: pointer; background: none; }
   border: var(--border-width) solid var(--border-color);
   box-shadow: var(--shadow-offset);
   white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 .message-wrapper.user .message-bubble {
   background-color: var(--color-primary);
@@ -296,12 +299,13 @@ button { cursor: pointer; background: none; }
 }
 .input-wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   background-color: var(--color-surface);
   border: var(--border-width) solid var(--border-color);
   border-radius: var(--border-radius);
-  height: 54px;
-  padding: 0 6px 0 16px;
+  min-height: 54px;
+  height: auto;
+  padding: 6px 6px 6px 16px;
   box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 .command-input {
@@ -314,6 +318,11 @@ button { cursor: pointer; background: none; }
   font-size: 15px;
   font-weight: 500;
   color: var(--color-text-primary);
+  resize: none;
+  max-height: 120px;
+  min-height: 24px;
+  align-self: center;
+  scrollbar-width: thin;
 }
 .command-input::placeholder { color: var(--color-text-tertiary); font-weight: 400; }
 .send-btn {

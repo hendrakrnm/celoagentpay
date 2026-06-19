@@ -75,6 +75,7 @@ function normalizeAgentAction(parsed: any): any {
   else if (actionLower === "createschedule") result.action = "createSchedule";
   else if (actionLower === "getbalance") result.action = "getBalance";
   else if (actionLower === "gethistory") result.action = "getHistory";
+  else if (actionLower === "receive") result.action = "receive";
   else if (actionLower === "clarify") result.action = "clarify";
 
   if (paramsValue && typeof paramsValue === "object") {
