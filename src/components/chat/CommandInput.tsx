@@ -1,22 +1,28 @@
 "use client";
 
-import { useState } from "react";
 import { Send } from "lucide-react";
 
 interface CommandInputProps {
   onSubmit: (message: string) => void;
   isLoading?: boolean;
   placeholder?: string;
+  value: string;
+  onChange: (val: string) => void;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
-export function CommandInput({ onSubmit, isLoading = false, placeholder = "Type a command..." }: CommandInputProps) {
-  const [value, setValue] = useState("");
-
+export function CommandInput({
+  onSubmit,
+  isLoading = false,
+  placeholder = "Type a command...",
+  value,
+  onChange,
+  inputRef,
+}: CommandInputProps) {
   const handleSubmit = () => {
     const trimmed = value.trim();
     if (trimmed && !isLoading) {
       onSubmit(trimmed);
-      setValue("");
     }
   };
 
@@ -31,10 +37,11 @@ export function CommandInput({ onSubmit, isLoading = false, placeholder = "Type 
     <div className="input-bar">
       <div className="input-wrapper">
         <input
+          ref={inputRef}
           type="text"
           className="command-input"
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isLoading}
