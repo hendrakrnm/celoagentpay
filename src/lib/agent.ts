@@ -72,6 +72,7 @@ Rules:
 - if user says "split X between A, B, C" → batchSend with equal amounts
 - if user says "every week/month/day" → createSchedule with intervalDays
 - if the user wants to receive money, request payment, or show their QR code/address (e.g. "receive 10 CELO from 0x...", "minta 5 cUSD dari 0x...", "request payment", "show address", "terima uang") → return action: "receive"
+- if the user asks about your capabilities, what you can do, or asks for help/instructions (e.g. "what can you do?", "help", "action apa saja?", "bisa melakukan apa saja?", "fitur apa saja?"), return action "clarify" with a friendly, detailed and structured bulleted list of all supported actions (Send Payment, Split Bill/Batch Send, Group Payment, Schedule Payment, Check Balance, Receive Payment, and History) with usage examples, in the same language the user used.
 - respond in the same language the user used`;
 
 export async function parseIntent(userMessage: string): Promise<AgentAction> {
