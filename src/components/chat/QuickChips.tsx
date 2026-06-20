@@ -1,13 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Send, Split, RotateCw, Eye } from "lucide-react";
-
 const chips = [
-  { label: "Send payment", icon: Send },
-  { label: "Split bill", icon: Split },
-  { label: "Pay weekly", icon: RotateCw },
-  { label: "Check balance", icon: Eye },
+  { label: "send", display: "Send", className: "chip primary" },
+  { label: "receive", display: "Receive", className: "chip secondary" },
+  { label: "history", display: "History", className: "chip" },
 ];
 
 interface QuickChipsProps {
@@ -15,35 +11,11 @@ interface QuickChipsProps {
 }
 
 export function QuickChips({ onSelect }: QuickChipsProps) {
-  const [active, setActive] = useState<string | null>(null);
-
   return (
-    <div className="px-4 py-3 overflow-x-auto flex gap-2 scrollbar-hide">
-      {chips.map(({ label, icon: Icon }) => (
-        <button
-          key={label}
-          onClick={() => {
-            setActive(label);
-            onSelect(label);
-            setTimeout(() => setActive(null), 300);
-          }}
-          style={active === label ? { background: "var(--color-primary)", borderColor: "var(--color-primary)" } : {}}
-          className={`
-            px-4 py-2.5 rounded-[20px]
-            text-13 font-medium whitespace-nowrap
-            border transition-all duration-150
-            flex-shrink-0 flex items-center gap-2
-            shadow-[var(--shadow-sm)]
-            active:scale-95
-            ${
-              active === label
-                ? "text-white scale-105"
-                : "bg-white border-[var(--color-border)] text-[var(--color-text-secondary)]"
-            }
-          `}
-        >
-          <Icon className="w-4 h-4" />
-          <span>{label}</span>
+    <div className="quick-actions">
+      {chips.map((chip) => (
+        <button key={chip.label} className={chip.className} onClick={() => onSelect(chip.label)}>
+          {chip.display}
         </button>
       ))}
     </div>

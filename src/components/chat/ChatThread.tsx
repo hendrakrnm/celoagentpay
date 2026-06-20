@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useWriteContract, useSendTransaction } from "wagmi";
 import { useWallet } from "@/lib/wallet";
 import { BalanceCard } from "./BalanceCard";
@@ -9,18 +10,10 @@ import { QuickChips } from "./QuickChips";
 import { CommandInput } from "./CommandInput";
 import { TxConfirmCard } from "./TxConfirmCard";
 import { TxSuccessCard } from "./TxSuccessCard";
+import { ReceiveCard } from "./ReceiveCard";
 import { parseIntent, type AgentAction } from "@/lib/agent";
-import { executeAction, EXPLORER_BASE } from "@/lib/contracts";
-
-interface Message {
-  id: string;
-  type: "user" | "agent" | "agent-loading" | "confirmation" | "success";
-  content?: string;
-  timestamp?: Date;
-  action?: AgentAction;
-  txHash?: string;
-  explorerUrl?: string;
-}
+import { executeAction, EXPLORER_BASE, type ExecuteOptions } from "@/lib/contracts";
+import { useChat, type Message } from "@/providers/ChatProvider";
 
 function buildConfirmDetails(action: AgentAction): Record<string, string | number | undefined> {
   if (action.action === "sendPayment") {
@@ -73,36 +66,64 @@ function actionLabel(action: AgentAction): string {
     createSchedule: "Schedule Payment",
     getBalance: "Check Balance",
     getHistory: "Payment History",
+    receive: "Receive Payment",
   };
   return labels[action.action] ?? action.action;
 }
 
+function getConfirmButtonLabel(actionType: string): string {
+  const labels: Record<string, string> = {
+    sendPayment: "Confirm & Send",
+    batchSend: "Confirm & Split",
+    createGroup: "Confirm & Create",
+    contribute: "Confirm & Contribute",
+    createSchedule: "Confirm & Schedule",
+  };
+  return labels[actionType] ?? "Confirm";
+}
+
 export function ChatThread() {
-  const { address, isConnected, isReady, publicClient, switchToCorrectChain } = useWallet();
+  const { address, isConnected, isReady, publicClient, switchToCorrectChain, connect } = useWallet();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
+  const router = useRouter();
+  const { messages, setMessages, isLoading, setIsLoading } = useChat();
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      type: "agent",
-      content: "Hi! I'm your CeloPay Agent. Connect your wallet and tell me what you'd like to do.\n\nTry: \"send 5 cUSD to 0x123... for lunch\" or \"check my balance\"",
-      timestamp: new Date(),
-    },
-  ]);
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const handleSelectChip = (chipLabel: string) => {
+    if (chipLabel === "history") {
+      router.push("/history");
+      return;
+    }
+
+    if (chipLabel === "send") {
+      setInputValue("send 5 cUSD to ");
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return;
+    }
+
+    if (chipLabel === "receive") {
+      addMessage({
+        type: "receive",
+        timestamp: new Date(),
+      });
+      return;
+    }
+
+    handleSendMessage(chipLabel);
+  };
 
   const addMessage = (msg: Omit<Message, "id">) => {
     setMessages((prev) => [...prev, { id: Date.now().toString() + Math.random(), ...msg }]);
   };
 
   const handleSendMessage = async (text: string) => {
+    setInputValue("");
     if (!isConnected) {
       addMessage({ type: "agent", content: "Please connect your wallet first.", timestamp: new Date() });
       return;
@@ -141,6 +162,12 @@ export function ChatThread() {
           timestamp: new Date(),
         });
 
+      } else if (result.action === "receive") {
+        addMessage({
+          type: "receive",
+          timestamp: new Date(),
+        });
+
       } else {
         // Show confirmation card for all write actions
         addMessage({ type: "confirmation", action: result });
@@ -167,17 +194,35 @@ export function ChatThread() {
     );
 
     try {
+      let approveMessage = "Submitting transaction... (check your wallet)";
+      if (action.action === "createGroup") {
+        approveMessage = "Creating payment group... (check your wallet)";
+      } else if (action.action === "sendPayment") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Sending ${token} payment... (check your wallet)`;
+      } else if (action.action === "contribute") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend to contribute to group... (check your wallet)`;
+      } else if (action.action === "createSchedule") {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend to schedule payment... (check your wallet)`;
+      } else {
+        const token = "params" in action && action.params && "token" in action.params ? action.params.token : "cUSD";
+        approveMessage = `Approving ${token} spend... (check your wallet)`;
+      }
+
       addMessage({
         type: "agent",
-        content: "Approving cUSD spend... (check your wallet)",
+        content: approveMessage,
         timestamp: new Date(),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hash = await executeAction(action, {
-        writeContractAsync: writeContractAsync as any,
-        sendTransactionAsync: sendTransactionAsync as any,
-      });
+      const executeOptions: ExecuteOptions = {
+        writeContractAsync: writeContractAsync as unknown as ExecuteOptions["writeContractAsync"],
+        sendTransactionAsync: sendTransactionAsync as unknown as ExecuteOptions["sendTransactionAsync"],
+      };
+
+      const hash = await executeAction(action, executeOptions);
 
       addMessage({
         type: "agent",
@@ -225,63 +270,79 @@ export function ChatThread() {
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="page">
       <BalanceCard />
+      <QuickChips onSelect={handleSelectChip} />
 
-      {/* Scrollable message area */}
-      <div
-        className="flex-1 overflow-y-auto min-h-0 py-4 w-full"
-        style={{ background: "var(--color-bg)" }}
-      >
-        {messages.map((message) => {
-          if (message.type === "confirmation" && message.action) {
-            const action = message.action;
-            if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory") {
-              return null;
+      <div className="page-scroll">
+        <div className="chat-thread">
+          {messages.map((message) => {
+            if (message.type === "receive") {
+              return (
+                <ReceiveCard
+                  key={message.id}
+                  address={address}
+                  isConnected={isConnected}
+                  onConnect={connect}
+                />
+              );
             }
-            return (
-              <TxConfirmCard
-                key={message.id}
-                action={actionLabel(action)}
-                details={buildConfirmDetails(action)}
-                onCancel={() =>
-                  setMessages((prev) => prev.filter((m) => m.id !== message.id))
-                }
-                onApprove={() => handleApprove(message.id, action)}
-              />
-            );
-          }
 
-          if (message.type === "success") {
-            return (
-              <TxSuccessCard
-                key={message.id}
-                title="Transaction Submitted"
-                details="Waiting for confirmation on Celo"
-                txHash={message.txHash}
-                explorerUrl={message.explorerUrl}
-              />
-            );
-          }
+            if (message.type === "confirmation" && message.action) {
+              const action = message.action;
+              if (action.action === "clarify" || action.action === "getBalance" || action.action === "getHistory" || action.action === "receive") {
+                return null;
+              }
+              return (
+                <TxConfirmCard
+                  key={message.id}
+                  action={actionLabel(action)}
+                  details={buildConfirmDetails(action)}
+                  buttonLabel={getConfirmButtonLabel(action.action)}
+                  onCancel={() =>
+                    setMessages((prev) => prev.filter((m) => m.id !== message.id))
+                  }
+                  onApprove={() => handleApprove(message.id, action)}
+                />
+              );
+            }
 
-          if (message.type === "agent-loading" || message.type === "user" || message.type === "agent") {
-            return (
-              <MessageBubble
-                key={message.id}
-                type={message.type as "user" | "agent" | "agent-loading"}
-                content={message.content || ""}
-                timestamp={message.timestamp}
-              />
-            );
-          }
+            if (message.type === "success") {
+              return (
+                <TxSuccessCard
+                  key={message.id}
+                  title="Transaction Submitted"
+                  details="Waiting for confirmation on Celo"
+                  txHash={message.txHash}
+                  explorerUrl={message.explorerUrl}
+                />
+              );
+            }
 
-          return null;
-        })}
-        <div ref={messagesEndRef} />
+            if (message.type === "agent-loading" || message.type === "user" || message.type === "agent") {
+              return (
+                <MessageBubble
+                  key={message.id}
+                  type={message.type as "user" | "agent" | "agent-loading"}
+                  content={message.content || ""}
+                  timestamp={message.timestamp}
+                />
+              );
+            }
+
+            return null;
+          })}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <QuickChips onSelect={handleSendMessage} />
-      <CommandInput onSubmit={handleSendMessage} isLoading={isLoading} />
+      <CommandInput
+        onSubmit={handleSendMessage}
+        isLoading={isLoading}
+        value={inputValue}
+        onChange={setInputValue}
+        inputRef={inputRef}
+      />
     </div>
   );
 }

@@ -5,3 +5,4 @@ export { TxSuccessCard } from "./TxSuccessCard";
 export { QuickChips } from "./QuickChips";
 export { CommandInput } from "./CommandInput";
 export { ChatThread } from "./ChatThread";
+export { ReceiveCard } from "./ReceiveCard";

@@ -6,6 +6,7 @@ export type AgentAction =
   | { action: "createSchedule"; params: { recipient: string; amount: number; intervalDays: number; memo: string; token: string } }
   | { action: "getBalance"; params: { token?: string } }
   | { action: "getHistory"; params: Record<string, never> }
+  | { action: "receive"; params?: Record<string, never> }
   | { action: "clarify"; message: string };
 
 const SYSTEM_PROMPT = `You are a crypto payment assistant for Celo blockchain. Parse the user's message and return ONLY a valid JSON object — no explanation, no markdown, no code blocks.
@@ -20,6 +21,7 @@ Supported actions:
 - createSchedule: set up a recurring payment
 - getBalance: check wallet balance (optionally for a specific token)
 - getHistory: show recent transactions
+- receive: request payment, receive tokens, or display user's wallet address and QR code
 
 JSON schema to return:
 {
@@ -69,6 +71,8 @@ Rules:
 - detect token from message: "5 CELO" → CELO, "10 cEUR" → cEUR, "2 cREAL" → cREAL, default → cUSD
 - if user says "split X between A, B, C" → batchSend with equal amounts
 - if user says "every week/month/day" → createSchedule with intervalDays
+- if the user wants to receive money, request payment, or show their QR code/address (e.g. "receive 10 CELO from 0x...", "minta 5 cUSD dari 0x...", "request payment", "show address", "terima uang") → return action: "receive"
+- if the user asks about your capabilities, what you can do, or asks for help/instructions (e.g. "what can you do?", "help", "action apa saja?", "bisa melakukan apa saja?", "fitur apa saja?"), return action "clarify" with a friendly, detailed and structured bulleted list of all supported actions (Send Payment, Split Bill/Batch Send, Group Payment, Schedule Payment, Check Balance, Receive Payment, and History) with usage examples, in the same language the user used.
 - respond in the same language the user used`;
 
 export async function parseIntent(userMessage: string): Promise<AgentAction> {
