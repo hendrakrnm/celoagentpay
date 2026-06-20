@@ -17,6 +17,8 @@ dist/
 # testing
 /coverage
 
+/otwtopten
+
 .env.local
 .env
 .env.*
