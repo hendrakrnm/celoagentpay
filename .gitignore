@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+/otwtopten
+
 .env.local
 .env
 .env.example
