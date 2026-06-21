@@ -853,51 +853,51 @@ export default function GroupsPage() {
                         <div className="flex flex-col gap-2.5">
                           {formMembers.map((m, i) => (
                             <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-3">
-                              <div className="mb-2 flex items-center gap-2">
+                              <div className="grid grid-cols-[32px_minmax(0,1fr)_40px] gap-3">
                                 <div
-                                  style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)", boxShadow: "2px 2px 0 var(--border-color)" }}
+                                  className="mt-1 flex h-7 w-7 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-accent)] text-[11px] font-black text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
                                 >
                                   {i + 1}
                                 </div>
-                                <div className="grid flex-1 grid-cols-[1fr_auto] gap-2">
-                                  <input
-                                    type="text"
-                                    value={m.name}
-                                    onChange={(e) => updateMember(i, "name", e.target.value)}
-                                    className="h-10 w-full rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-3 text-[13px] font-semibold outline-none placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)]"
-                                    placeholder="Name (optional)"
-                                    disabled={creating}
-                                  />
-                                  {formMembers.length > 1 && (
-                                    <button
-                                      type="button"
-                                      onClick={() => removeMember(i)}
-                                      className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] hover:bg-[var(--color-danger)] hover:text-white"
-                                    >
-                                      <Trash2 size={13} strokeWidth={2.5} />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="relative">
                                 <input
                                   type="text"
-                                  value={m.addr}
-                                  onChange={(e) => updateMember(i, "addr", e.target.value)}
-                                  className={
-                                    inp(formErrs[`m_${i}`]) +
-                                    " h-11 font-mono text-[12px] pr-10"
-                                  }
-                                  placeholder="0x... wallet address"
+                                  value={m.name}
+                                  onChange={(e) => updateMember(i, "name", e.target.value)}
+                                  className="h-11 min-w-0 rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-3 text-[13px] font-semibold outline-none placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)]"
+                                  placeholder="Name (optional)"
                                   disabled={creating}
                                 />
-                                {m.addr && (
-                                  <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center ${isValidAddress(m.addr) ? "bg-[var(--color-secondary)]" : "bg-[var(--color-danger)]"}`}>
-                                    {isValidAddress(m.addr)
-                                      ? <Check size={8} strokeWidth={3} color="white" />
-                                      : <X size={8} strokeWidth={3} color="white" />}
-                                  </div>
+                                {formMembers.length > 1 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeMember(i)}
+                                    className="flex h-11 w-10 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] hover:bg-[var(--color-danger)] hover:text-white"
+                                  >
+                                    <Trash2 size={13} strokeWidth={2.5} />
+                                  </button>
+                                ) : (
+                                  <div />
                                 )}
+                                <div className="col-start-2 col-end-4 relative mt-2">
+                                  <input
+                                    type="text"
+                                    value={m.addr}
+                                    onChange={(e) => updateMember(i, "addr", e.target.value)}
+                                    className={
+                                      inp(formErrs[`m_${i}`]) +
+                                      " h-11 font-mono text-[12px] pr-10"
+                                    }
+                                    placeholder="0x... wallet address"
+                                    disabled={creating}
+                                  />
+                                  {m.addr && (
+                                    <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center ${isValidAddress(m.addr) ? "bg-[var(--color-secondary)]" : "bg-[var(--color-danger)]"}`}>
+                                      {isValidAddress(m.addr)
+                                        ? <Check size={8} strokeWidth={3} color="white" />
+                                        : <X size={8} strokeWidth={3} color="white" />}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                               {formErrs[`m_${i}`] && (
                                 <p className="text-[11px] font-bold text-[var(--color-danger)] flex items-center gap-1">
