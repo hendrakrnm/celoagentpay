@@ -661,7 +661,7 @@ export default function GroupsPage() {
                       Start a group savings pool to pay or save together.
                     </p>
                   </div>
-                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-1 px-5 h-10 flex items-center gap-1.5 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
+                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-2 flex h-11 items-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-5 text-sm font-bold uppercase text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
                     <Plus size={14} strokeWidth={3} /> New Group
                   </button>
                 </div>
@@ -685,7 +685,7 @@ export default function GroupsPage() {
               <button
                 type="button"
                 onClick={() => { setOpen(true); setStep(1); }}
-                className="w-full mt-4 flex items-center justify-center gap-2 h-14 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+                className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
               >
                 <Plus size={18} strokeWidth={3} />
                 New Group Pool

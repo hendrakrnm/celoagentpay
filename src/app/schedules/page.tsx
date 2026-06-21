@@ -333,7 +333,7 @@ export default function SchedulesPage() {
         <button
           type="button"
           onClick={openCreateModal}
-          className="w-full flex items-center justify-center gap-2 h-14 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-sm shadow-[var(--shadow-offset)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
         >
           <Plus size={20} strokeWidth={3} />
           New Schedule
