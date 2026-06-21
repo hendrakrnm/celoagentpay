@@ -150,17 +150,11 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between">
-        <label className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
-          {label}
-        </label>
-        {hint && (
-          <span className="text-[10px] font-medium text-[var(--color-text-tertiary)]">
-            {hint}
-          </span>
-        )}
-      </div>
+    <div className="input-group-ref">
+      <label className="input-label-ref">
+        <span>{label}</span>
+        {hint && <span className="helper-text-ref">{hint}</span>}
+      </label>
       {children}
       {error && (
         <span className="flex items-center gap-1 text-[11px] font-bold text-[var(--color-danger)]">
@@ -174,12 +168,9 @@ function Field({
 
 const inp = (err?: string) =>
   [
-    "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
-    "bg-[var(--color-surface)] rounded-[var(--border-radius)] border-[var(--border-width)] outline-none px-3 transition-colors duration-150",
-    "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
-    "focus:border-[var(--color-primary)]",
-    err ? "border-[var(--color-danger)]" : "border-[var(--border-color)]",
-  ].join(" ");
+    "memphis-input-ref",
+    err ? "border-[var(--color-danger)]" : "",
+  ].filter(Boolean).join(" ");
 
 // ─── GroupCard component ──────────────────────────────────────────────────────
 
@@ -653,28 +644,35 @@ export default function GroupsPage() {
                       Connect wallet to create or join group payment pools.
                     </p>
                   </div>
-                  <button onClick={connect} className="px-6 h-11 flex items-center gap-2 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
+                  <button onClick={connect} className="px-6 h-11 flex items-center gap-2 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
                     Connect Wallet
                   </button>
                 </div>
               </article>
             ) : myActive.length === 0 ? (
-              <article className="group-card text-center">
-                <div className="flex flex-col items-center gap-3 py-8">
-                  <div className="schedule-icon secondary">
-                    <Users size={20} strokeWidth={2.5} color="var(--color-surface)" />
+              <>
+                <article className="group-card text-center">
+                  <div className="flex flex-col items-center gap-3 py-8">
+                    <div className="schedule-icon secondary">
+                      <Users size={20} strokeWidth={2.5} color="var(--color-surface)" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-[var(--border-color)]">No active groups</h3>
+                      <p className="text-sm text-[var(--color-text-secondary)] font-medium mt-1">
+                        Start a group savings pool to pay or save together.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-base text-[var(--border-color)]">No active groups</h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] font-medium mt-1">
-                      Start a group savings pool to pay or save together.
-                    </p>
-                  </div>
-                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-1 px-5 h-10 flex items-center gap-1.5 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
-                    <Plus size={14} strokeWidth={3} /> New Group
-                  </button>
-                </div>
-              </article>
+                </article>
+                <button
+                  type="button"
+                  onClick={() => { setOpen(true); setStep(1); }}
+                  className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+                >
+                  <Plus size={18} strokeWidth={3} />
+                  New Group
+                </button>
+              </>
             ) : (
               <>
                 {myActive.map((g) => (
@@ -694,7 +692,7 @@ export default function GroupsPage() {
               <button
                 type="button"
                 onClick={() => { setOpen(true); setStep(1); }}
-                className="w-full mt-4 flex items-center justify-center gap-2 h-14 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+                className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
               >
                 <Plus size={18} strokeWidth={3} />
                 New Group Pool
@@ -722,19 +720,18 @@ export default function GroupsPage() {
           CREATE MODAL — 2-step
       ══════════════════════════════════════════════════════════════════════ */}
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-[rgba(26,26,46,0.4)] backdrop-blur-sm sm:justify-center sm:p-4">
+        <div className="modal-backdrop-ref">
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden"
-            style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
+            className="bottom-sheet-ref"
           >
             {/* ── Modal top bar ── */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-4 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className={`h-2 w-6 rounded-full border-2 border-[var(--border-color)] ${step === 1 ? "bg-[var(--color-primary)]" : "bg-[#d1d5db]"}`} />
-                <span className={`h-2 w-2 rounded-full border-2 border-[var(--border-color)] ${step === 2 ? "bg-[var(--color-secondary)]" : "bg-[#d1d5db]"}`} />
-                <h2 className="ml-1 truncate text-[14px] font-extrabold text-[var(--border-color)] uppercase tracking-wide">
+            <div className="modal-header-ref">
+              <div className="modal-header-left-ref">
+                <span className="step-indicator-dash-ref" />
+                <span className="step-indicator-dot-ref" />
+                <h2 className="modal-header-title-ref">
                   {step === 1 ? "1 — Group Details" : "2 — Add Members"}
                 </h2>
               </div>
@@ -742,14 +739,14 @@ export default function GroupsPage() {
                 type="button"
                 onClick={closeModal}
                 disabled={creating}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[var(--border-width)] border-[var(--border-color)] bg-[var(--color-surface)] shadow-[2px_2px_0px_var(--border-color)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                className="modal-close-btn-ref"
               >
-                <X size={16} strokeWidth={3} color="var(--border-color)" />
+                ✕
               </button>
             </div>
 
             <form onSubmit={handleCreate} className="flex flex-col min-h-0 flex-1">
-              <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
+              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5">
 
                 {/* ── STEP 1 ── */}
                 {step === 1 && (
@@ -768,7 +765,7 @@ export default function GroupsPage() {
                         type="text"
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
-                        className={inp(formErrs.title)}
+                        className={inp(formErrs.title) + " memphis-input-teal-ref"}
                         placeholder="e.g. Trip to Bali 🌴"
                         disabled={creating}
                       />
@@ -779,32 +776,32 @@ export default function GroupsPage() {
                         type="text"
                         value={formRecipient}
                         onChange={(e) => setFormRecipient(e.target.value)}
-                        className={inp(formErrs.recipient) + " font-mono text-[13px]"}
+                        className={inp(formErrs.recipient)}
                         placeholder="0x..."
                         disabled={creating}
                       />
                     </Field>
 
-                    <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
-                      <Field label="Target" hint="total cUSD" error={formErrs.target}>
-                        <div className="relative">
+                    <div className="input-row-ref">
+                      <div style={{ flex: 1.1 }}><Field label="Target" hint="total cUSD" error={formErrs.target}>
+                        <div className="input-wrapper-inner-ref">
                           <input
                             type="number"
                             min="0.01"
                             step="0.01"
                             value={formTarget}
                             onChange={(e) => setFormTarget(e.target.value)}
-                            className={inp(formErrs.target) + " pr-20"}
+                            className={inp(formErrs.target) + " input-inner-field-ref"}
                             placeholder="0.00"
                             disabled={creating}
                           />
-                          <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-2 py-0.5 text-[11px] font-black text-[var(--border-color)] pointer-events-none uppercase">
+                          <span className="currency-badge-ref">
                             cUSD
                           </span>
                         </div>
-                      </Field>
+                      </Field></div>
 
-                      <Field label="Deadline" error={formErrs.deadline}>
+                      <div className=""><Field label="Deadline" error={formErrs.deadline}>
                         <input
                           type="date"
                           value={formDeadlineDate}
@@ -813,7 +810,7 @@ export default function GroupsPage() {
                           className={inp(formErrs.deadline)}
                           disabled={creating}
                         />
-                      </Field>
+                      </Field></div>
                     </div>
 
                     {/* Per-person preview card */}
@@ -839,18 +836,22 @@ export default function GroupsPage() {
                 {/* ── STEP 2 ── */}
                 {step === 2 && (
                   <>
-                    <div className="bg-[var(--color-secondary)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] p-3 flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
-                          Creating
-                        </div>
-                        <div className="max-w-[190px] truncate text-[15px] font-extrabold text-white">{formTitle}</div>
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="mb-1 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                          Select participating members:
+                        </p>
+                        <p className="truncate text-[14px] font-extrabold text-[var(--border-color)]">
+                          {formTitle || "Group"}
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
+                      <div className="shrink-0 text-right">
+                        <p className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-tertiary)]">
                           Target
-                        </div>
-                        <div className="font-black text-white font-mono">{formTarget} cUSD</div>
+                        </p>
+                        <p className="font-black font-mono text-[var(--border-color)]">
+                          {formTarget || "0"} cUSD
+                        </p>
                       </div>
                     </div>
 
@@ -858,52 +859,52 @@ export default function GroupsPage() {
                       <Field label="Group Members" hint="invite friends" error={undefined}>
                         <div className="flex flex-col gap-2.5">
                           {formMembers.map((m, i) => (
-                            <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-2.5 flex flex-col gap-2">
-                              <div className="flex items-center gap-2">
+                            <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-3">
+                              <div className="grid grid-cols-[32px_minmax(0,1fr)_40px] gap-3">
                                 <div
-                                  style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)", boxShadow: "2px 2px 0 var(--border-color)" }}
+                                  className="mt-1 flex h-7 w-7 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-accent)] text-[11px] font-black text-[var(--border-color)] shadow-[2px_2px_0_var(--border-color)]"
                                 >
                                   {i + 1}
                                 </div>
-                                <div className="flex-1 grid grid-cols-[1fr_auto] gap-1.5">
-                                  <input
-                                    type="text"
-                                    value={m.name}
-                                    onChange={(e) => updateMember(i, "name", e.target.value)}
-                                    className="h-9 font-semibold text-[13px] bg-white rounded-lg border-2 border-[var(--border-color)] outline-none px-3 placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)] transition-colors"
-                                    placeholder="Name (optional)"
-                                    disabled={creating}
-                                  />
-                                  {formMembers.length > 1 && (
-                                    <button
-                                      type="button"
-                                      onClick={() => removeMember(i)}
-                                      className="w-9 h-9 flex items-center justify-center bg-white border-2 border-[var(--border-color)] rounded-lg hover:bg-[var(--color-danger)] hover:text-white transition-colors"
-                                    >
-                                      <Trash2 size={13} strokeWidth={2.5} />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="ml-9 relative">
                                 <input
                                   type="text"
-                                  value={m.addr}
-                                  onChange={(e) => updateMember(i, "addr", e.target.value)}
-                                  className={
-                                    inp(formErrs[`m_${i}`]) +
-                                    " h-10 font-mono text-[12px] pr-10"
-                                  }
-                                  placeholder="0x... wallet address"
+                                  value={m.name}
+                                  onChange={(e) => updateMember(i, "name", e.target.value)}
+                                  className="h-11 min-w-0 rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-3 text-[13px] font-semibold outline-none placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)]"
+                                  placeholder="Name (optional)"
                                   disabled={creating}
                                 />
-                                {m.addr && (
-                                  <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center ${isValidAddress(m.addr) ? "bg-[var(--color-secondary)]" : "bg-[var(--color-danger)]"}`}>
-                                    {isValidAddress(m.addr)
-                                      ? <Check size={8} strokeWidth={3} color="white" />
-                                      : <X size={8} strokeWidth={3} color="white" />}
-                                  </div>
+                                {formMembers.length > 1 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeMember(i)}
+                                    className="flex h-11 w-10 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] hover:bg-[var(--color-danger)] hover:text-white"
+                                  >
+                                    <Trash2 size={13} strokeWidth={2.5} />
+                                  </button>
+                                ) : (
+                                  <div />
                                 )}
+                                <div className="col-start-2 col-end-4 relative mt-2">
+                                  <input
+                                    type="text"
+                                    value={m.addr}
+                                    onChange={(e) => updateMember(i, "addr", e.target.value)}
+                                    className={
+                                      inp(formErrs[`m_${i}`]) +
+                                      " h-11 font-mono text-[12px] pr-10"
+                                    }
+                                    placeholder="0x... wallet address"
+                                    disabled={creating}
+                                  />
+                                  {m.addr && (
+                                    <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center ${isValidAddress(m.addr) ? "bg-[var(--color-secondary)]" : "bg-[var(--color-danger)]"}`}>
+                                      {isValidAddress(m.addr)
+                                        ? <Check size={8} strokeWidth={3} color="white" />
+                                        : <X size={8} strokeWidth={3} color="white" />}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                               {formErrs[`m_${i}`] && (
                                 <p className="text-[11px] font-bold text-[var(--color-danger)] flex items-center gap-1">
@@ -919,7 +920,7 @@ export default function GroupsPage() {
                         type="button"
                         onClick={addMember}
                         disabled={creating}
-                        className="w-full h-11 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-[11px] text-[var(--color-text-secondary)] hover:bg-white transition-colors"
+                        className="btn-ghost w-full border-dashed gap-2"
                       >
                         <UserPlus size={13} strokeWidth={2.5} />
                         Add Another Member
@@ -927,7 +928,7 @@ export default function GroupsPage() {
 
                       {/* Per-person summary */}
                       {Number(formTarget) > 0 && (
-                        <div className="bg-[var(--color-accent)] border-2 border-[var(--border-color)] rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex items-center justify-between rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-2">
                           <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--border-color)]">
                             Each pays
                           </span>
@@ -946,14 +947,14 @@ export default function GroupsPage() {
               </div>
 
               {/* ── Footer ── */}
-              <div className="shrink-0 px-4 py-4 border-t-2 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
+              <div className="modal-footer-btns-ref">
                 {step === 2 ? (
                   <button
                     type="button"
                     onClick={() => setStep(1)}
                     disabled={creating}
-                    style={{ height: 48, background: "var(--color-bg)", color: "var(--color-text-secondary)" }}
-                    className="w-20 border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                    
+                    className="btn-ghost"
                   >
                     ← Back
                   </button>
@@ -962,8 +963,8 @@ export default function GroupsPage() {
                     type="button"
                     onClick={closeModal}
                     disabled={creating}
-                    style={{ height: 48, background: "var(--color-bg)", color: "var(--color-text-secondary)" }}
-                    className="flex-1 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                    
+                    className="btn-ghost"
                   >
                     Cancel
                   </button>
@@ -972,17 +973,13 @@ export default function GroupsPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  style={{
-                    height: 48,
-                    background: step === 2 ? "var(--color-primary)" : "var(--color-secondary)",
-                    color: "white",
-                  }}
-                  className="flex-[2] flex items-center justify-center gap-2 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-extrabold uppercase tracking-wider text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  style={{ backgroundColor: step === 2 ? "var(--color-primary)" : "var(--color-secondary)", color: "var(--color-surface)" }}
+                  className="btn-ghost gap-2"
                 >
                   {creating ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : step === 1 ? (
-                    <>Next — Add Members →</>
+                    <>Add Members</>
                   ) : (
                     <><Zap size={15} strokeWidth={2.5} /> Create Pool</>
                   )}
