@@ -143,12 +143,12 @@ function Field({
 /* ─── Shared input class ────────────────────────────────────────── */
 const inputCls = (error?: string) =>
   [
-    "h-12 w-full font-bold text-[14px] text-[var(--color-text-primary)]",
-    "bg-white rounded-[12px]",
-    "border-2",
-    "outline-none px-4 transition-all duration-150",
-    "placeholder:text-[var(--color-text-tertiary)] placeholder:font-medium",
-    "focus:border-[var(--color-secondary)] focus:ring-2 focus:ring-[var(--color-secondary)]/15",
+    "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
+    "bg-[var(--color-surface)] rounded-[var(--border-radius)]",
+    "border-[var(--border-width)]",
+    "outline-none px-3 transition-colors duration-150",
+    "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
+    "focus:border-[var(--color-primary)]",
     error
       ? "border-[var(--color-danger)]"
       : "border-[var(--border-color)]",
@@ -350,29 +350,29 @@ export default function SchedulesPage() {
 
       {/* ── Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-black/60 backdrop-blur-sm sm:justify-center sm:p-4">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-[rgba(26,26,46,0.4)] backdrop-blur-sm sm:justify-center sm:p-4">
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
             className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-200"
-            style={{ boxShadow: "0 -6px 0px var(--border-color)" }}
+            style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
           >
             {/* ── Header ── */}
-            <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b-2 border-[var(--border-color)] bg-[var(--color-surface)]">
-              <div className="flex items-center gap-3">
-                <div className="schedule-icon secondary shrink-0 p-1.5 border-2 border-[var(--border-color)] rounded-lg">
-                  <CalendarDays size={18} strokeWidth={2.5} color="var(--color-surface)" />
+            <div className="flex items-center justify-between px-4 py-4 shrink-0 border-b-2 border-[var(--border-color)] bg-[var(--color-surface)]">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-secondary)] text-[var(--color-surface)]">
+                  <CalendarDays size={18} strokeWidth={2.5} />
                 </div>
-                <h2 className="text-[15px] font-extrabold text-[var(--border-color)] uppercase tracking-widest">
+                <h2 className="truncate text-[14px] font-extrabold text-[var(--border-color)] uppercase tracking-wide">
                   {isEditing ? "Edit Schedule" : "New Schedule"}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-8 h-8 flex items-center justify-center border-2 border-[var(--border-color)] rounded-[8px] bg-white hover:bg-[var(--color-accent)] active:translate-y-px transition-colors"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[var(--border-width)] border-[var(--border-color)] bg-[var(--color-surface)] shadow-[2px_2px_0px_var(--border-color)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
               >
-                <X size={18} strokeWidth={3} color="var(--border-color)" />
+                <X size={16} strokeWidth={3} color="var(--border-color)" />
               </button>
             </div>
 
@@ -381,7 +381,7 @@ export default function SchedulesPage() {
               onSubmit={handleSubmit}
               className="flex min-h-0 flex-1 flex-col"
             >
-              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5 bg-[var(--color-surface)]">
+              <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4 bg-[var(--color-surface)]">
                 {/* Title */}
                 <Field label="Title">
                   <input
@@ -408,10 +408,10 @@ export default function SchedulesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, amount: e.target.value })
                       }
-                      className={inputCls() + " pr-16"}
+                      className={inputCls() + " pr-20"}
                       placeholder="0.00"
                     />
-                    <div className="absolute right-4 text-xs font-bold text-[var(--border-color)] uppercase pointer-events-none">
+                    <div className="absolute right-2 rounded-md border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-2 py-0.5 text-[11px] font-black text-[var(--border-color)] uppercase pointer-events-none">
                       cUSD
                     </div>
                   </div>
@@ -433,7 +433,7 @@ export default function SchedulesPage() {
                 </Field>
 
                 {/* Date + Time side by side */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
                   <Field label="Start Date" error={errors.date}>
                     <input
                       required
@@ -498,7 +498,7 @@ export default function SchedulesPage() {
               </div>
 
               {/* ── Submit footer ── */}
-              <div className="shrink-0 px-5 py-4 border-t-2 border-[var(--border-color)] bg-white flex gap-3">
+              <div className="shrink-0 px-4 py-4 border-t-2 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
@@ -507,7 +507,7 @@ export default function SchedulesPage() {
                     backgroundColor: "var(--color-bg)",
                     color: "var(--color-text-secondary)",
                   }}
-                  className="flex-1 flex items-center justify-center border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] hover:shadow-[1px_1px_0px_var(--border-color)] hover:translate-x-px hover:translate-y-px active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  className="flex-1 flex items-center justify-center border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
                 >
                   Cancel
                 </button>
@@ -518,7 +518,7 @@ export default function SchedulesPage() {
                     backgroundColor: "var(--color-primary)",
                     color: "var(--color-surface)",
                   }}
-                  className="flex-[2] flex items-center justify-center gap-2 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-xs shadow-[2px_2px_0px_var(--border-color)] hover:shadow-[1px_1px_0px_var(--border-color)] hover:translate-x-px hover:translate-y-px active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  className="flex-[2] flex items-center justify-center gap-2 border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
                 >
                   <Zap size={16} strokeWidth={3} />
                   {isEditing ? "Save" : "Create"}
