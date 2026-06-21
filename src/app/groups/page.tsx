@@ -829,16 +829,22 @@ export default function GroupsPage() {
                 {/* ── STEP 2 ── */}
                 {step === 2 && (
                   <>
-                    <div className="mb-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
-                      <div>
-                        <div className="text-[12px] font-semibold text-[var(--color-text-secondary)]">Select participating members:</div>
-                        <div className="max-w-[190px] truncate text-[13px] font-bold text-[var(--border-color)]">{formTitle}</div>
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="mb-1 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                          Select participating members:
+                        </p>
+                        <p className="truncate text-[14px] font-extrabold text-[var(--border-color)]">
+                          {formTitle || "Group"}
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
+                      <div className="shrink-0 text-right">
+                        <p className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-tertiary)]">
                           Target
-                        </div>
-                        <div className="font-black text-white font-mono">{formTarget} cUSD</div>
+                        </p>
+                        <p className="font-black font-mono text-[var(--border-color)]">
+                          {formTarget || "0"} cUSD
+                        </p>
                       </div>
                     </div>
 
@@ -846,19 +852,19 @@ export default function GroupsPage() {
                       <Field label="Group Members" hint="invite friends" error={undefined}>
                         <div className="flex flex-col gap-2.5">
                           {formMembers.map((m, i) => (
-                            <div key={i} className="member-select-item-ref flex-col items-stretch gap-2">
-                              <div className="flex items-center gap-2">
+                            <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-3">
+                              <div className="mb-2 flex items-center gap-2">
                                 <div
                                   style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)", boxShadow: "2px 2px 0 var(--border-color)" }}
                                 >
                                   {i + 1}
                                 </div>
-                                <div className="flex-1 grid grid-cols-[1fr_auto] gap-1.5">
+                                <div className="grid flex-1 grid-cols-[1fr_auto] gap-2">
                                   <input
                                     type="text"
                                     value={m.name}
                                     onChange={(e) => updateMember(i, "name", e.target.value)}
-                                    className="h-9 font-semibold text-[13px] bg-white rounded-lg border-2 border-[var(--border-color)] outline-none px-3 placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)] transition-colors"
+                                    className="h-10 w-full rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-3 text-[13px] font-semibold outline-none placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal focus:border-[var(--color-secondary)]"
                                     placeholder="Name (optional)"
                                     disabled={creating}
                                   />
@@ -866,21 +872,21 @@ export default function GroupsPage() {
                                     <button
                                       type="button"
                                       onClick={() => removeMember(i)}
-                                      className="w-9 h-9 flex items-center justify-center bg-white border-2 border-[var(--border-color)] rounded-lg hover:bg-[var(--color-danger)] hover:text-white transition-colors"
+                                      className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-surface)] hover:bg-[var(--color-danger)] hover:text-white"
                                     >
                                       <Trash2 size={13} strokeWidth={2.5} />
                                     </button>
                                   )}
                                 </div>
                               </div>
-                              <div className="ml-9 relative">
+                              <div className="relative">
                                 <input
                                   type="text"
                                   value={m.addr}
                                   onChange={(e) => updateMember(i, "addr", e.target.value)}
                                   className={
                                     inp(formErrs[`m_${i}`]) +
-                                    " h-10 font-mono text-[12px] pr-10"
+                                    " h-11 font-mono text-[12px] pr-10"
                                   }
                                   placeholder="0x... wallet address"
                                   disabled={creating}
@@ -907,7 +913,7 @@ export default function GroupsPage() {
                         type="button"
                         onClick={addMember}
                         disabled={creating}
-                        className="btn-ghost w-full border-dashed"
+                        className="btn-ghost w-full border-dashed gap-2"
                       >
                         <UserPlus size={13} strokeWidth={2.5} />
                         Add Another Member
@@ -915,7 +921,7 @@ export default function GroupsPage() {
 
                       {/* Per-person summary */}
                       {Number(formTarget) > 0 && (
-                        <div className="bg-[var(--color-accent)] border-2 border-[var(--border-color)] rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex items-center justify-between rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-accent)] px-3 py-2">
                           <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--border-color)]">
                             Each pays
                           </span>
@@ -960,12 +966,8 @@ export default function GroupsPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  style={{
-                    height: 48,
-                    background: step === 2 ? "var(--color-primary)" : "var(--color-secondary)",
-                    color: "white",
-                  }}
-                  className="flex-[2] flex items-center justify-center gap-2 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-extrabold uppercase tracking-wider text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  style={{ backgroundColor: step === 2 ? "var(--color-primary)" : "var(--color-secondary)", color: "var(--color-surface)" }}
+                  className="btn-ghost gap-2"
                 >
                   {creating ? (
                     <Loader2 size={16} className="animate-spin" />
