@@ -471,19 +471,18 @@ export default function SchedulesPage() {
               </div>
 
               {/* ── Submit footer ── */}
-              <div className="mt-[26px] flex shrink-0 gap-3 bg-[var(--color-surface)]">
+              <div className="modal-footer-btns-ref">
                 <button
                   type="button"
                   onClick={closeModal}
-
-                  className="btn-ghost"
+                  className="btn-ghost flex-1"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-style={{ backgroundColor: "var(--color-primary)", color: "var(--color-surface)" }}
-                  className="btn-ghost"
+                  style={{ backgroundColor: "var(--color-primary)", color: "var(--color-surface)" }}
+                  className="btn-ghost flex-1"
                 >
                   <Zap size={16} strokeWidth={3} />
                   {isEditing ? "Save" : "Create"}
