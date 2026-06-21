@@ -650,22 +650,29 @@ export default function GroupsPage() {
                 </div>
               </article>
             ) : myActive.length === 0 ? (
-              <article className="group-card text-center">
-                <div className="flex flex-col items-center gap-3 py-8">
-                  <div className="schedule-icon secondary">
-                    <Users size={20} strokeWidth={2.5} color="var(--color-surface)" />
+              <>
+                <article className="group-card text-center">
+                  <div className="flex flex-col items-center gap-3 py-8">
+                    <div className="schedule-icon secondary">
+                      <Users size={20} strokeWidth={2.5} color="var(--color-surface)" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-[var(--border-color)]">No active groups</h3>
+                      <p className="text-sm text-[var(--color-text-secondary)] font-medium mt-1">
+                        Start a group savings pool to pay or save together.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-base text-[var(--border-color)]">No active groups</h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] font-medium mt-1">
-                      Start a group savings pool to pay or save together.
-                    </p>
-                  </div>
-                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-2 flex h-11 items-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] px-5 text-sm font-bold uppercase text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
-                    <Plus size={14} strokeWidth={3} /> New Group
-                  </button>
-                </div>
-              </article>
+                </article>
+                <button
+                  type="button"
+                  onClick={() => { setOpen(true); setStep(1); }}
+                  className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+                >
+                  <Plus size={18} strokeWidth={3} />
+                  New Group
+                </button>
+              </>
             ) : (
               <>
                 {myActive.map((g) => (
@@ -972,7 +979,7 @@ export default function GroupsPage() {
                   {creating ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : step === 1 ? (
-                    <>Next — Add Members →</>
+                    <>Add Members</>
                   ) : (
                     <><Zap size={15} strokeWidth={2.5} /> Create Pool</>
                   )}
