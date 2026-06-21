@@ -144,9 +144,9 @@ function Field({
 const inputCls = (error?: string) =>
   [
     "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
-    "bg-[var(--color-surface)] rounded-[var(--border-radius)]",
-    "border-[var(--border-width)]",
-    "outline-none px-3 transition-colors duration-150",
+    "bg-white rounded-[var(--border-radius)]",
+    "border-[3px]",
+    "outline-none px-4 transition-colors duration-150",
     "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
     "focus:border-[var(--color-primary)]",
     error
@@ -354,11 +354,11 @@ export default function SchedulesPage() {
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-200"
+            className="relative w-[calc(100%-48px)] max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-[24px] overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-200"
             style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
           >
             {/* ── Header ── */}
-            <div className="flex items-center justify-between px-4 py-4 shrink-0 border-b-2 border-[var(--border-color)] bg-[var(--color-surface)]">
+            <div className="flex items-center justify-between px-5 py-5 shrink-0 border-b-2 border-[var(--border-color)] bg-[var(--color-surface)]">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-[var(--border-color)] bg-[var(--color-secondary)] text-[var(--color-surface)]">
                   <CalendarDays size={18} strokeWidth={2.5} />
@@ -381,7 +381,7 @@ export default function SchedulesPage() {
               onSubmit={handleSubmit}
               className="flex min-h-0 flex-1 flex-col"
             >
-              <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4 bg-[var(--color-surface)]">
+              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5 bg-[var(--color-surface)]">
                 {/* Title */}
                 <Field label="Title">
                   <input
@@ -498,7 +498,7 @@ export default function SchedulesPage() {
               </div>
 
               {/* ── Submit footer ── */}
-              <div className="shrink-0 px-4 py-4 border-t-2 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
+              <div className="shrink-0 px-5 py-5 border-t-0 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
                 <button
                   type="button"
                   onClick={closeModal}

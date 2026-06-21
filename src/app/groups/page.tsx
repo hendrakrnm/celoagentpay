@@ -175,7 +175,7 @@ function Field({
 const inp = (err?: string) =>
   [
     "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
-    "bg-[var(--color-surface)] rounded-[var(--border-radius)] border-[var(--border-width)] outline-none px-3 transition-colors duration-150",
+    "bg-white rounded-[var(--border-radius)] border-[3px] outline-none px-4 transition-colors duration-150",
     "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
     "focus:border-[var(--color-primary)]",
     err ? "border-[var(--color-danger)]" : "border-[var(--border-color)]",
@@ -726,11 +726,11 @@ export default function GroupsPage() {
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden"
+            className="relative w-[calc(100%-48px)] max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-[24px] overflow-hidden"
             style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
           >
             {/* ── Modal top bar ── */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-4 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
+            <div className="shrink-0 flex items-center justify-between px-5 py-5 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
               <div className="flex min-w-0 items-center gap-2">
                 <span className={`h-2 w-6 rounded-full border-2 border-[var(--border-color)] ${step === 1 ? "bg-[var(--color-primary)]" : "bg-[#d1d5db]"}`} />
                 <span className={`h-2 w-2 rounded-full border-2 border-[var(--border-color)] ${step === 2 ? "bg-[var(--color-secondary)]" : "bg-[#d1d5db]"}`} />
@@ -749,7 +749,7 @@ export default function GroupsPage() {
             </div>
 
             <form onSubmit={handleCreate} className="flex flex-col min-h-0 flex-1">
-              <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
+              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5">
 
                 {/* ── STEP 1 ── */}
                 {step === 1 && (
@@ -946,7 +946,7 @@ export default function GroupsPage() {
               </div>
 
               {/* ── Footer ── */}
-              <div className="shrink-0 px-4 py-4 border-t-2 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
+              <div className="shrink-0 px-5 py-5 border-t-0 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
                 {step === 2 ? (
                   <button
                     type="button"
