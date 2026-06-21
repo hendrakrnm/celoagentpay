@@ -150,17 +150,11 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between">
-        <label className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
-          {label}
-        </label>
-        {hint && (
-          <span className="text-[10px] font-medium text-[var(--color-text-tertiary)]">
-            {hint}
-          </span>
-        )}
-      </div>
+    <div className="input-group-ref">
+      <label className="input-label-ref">
+        <span>{label}</span>
+        {hint && <span className="helper-text-ref">{hint}</span>}
+      </label>
       {children}
       {error && (
         <span className="flex items-center gap-1 text-[11px] font-bold text-[var(--color-danger)]">
@@ -174,12 +168,9 @@ function Field({
 
 const inp = (err?: string) =>
   [
-    "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
-    "bg-white rounded-[var(--border-radius)] border-[3px] outline-none px-4 transition-colors duration-150",
-    "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
-    "focus:border-[var(--color-primary)]",
-    err ? "border-[var(--color-danger)]" : "border-[var(--border-color)]",
-  ].join(" ");
+    "memphis-input-ref",
+    err ? "border-[var(--color-danger)]" : "",
+  ].filter(Boolean).join(" ");
 
 // ─── GroupCard component ──────────────────────────────────────────────────────
 
@@ -653,7 +644,7 @@ export default function GroupsPage() {
                       Connect wallet to create or join group payment pools.
                     </p>
                   </div>
-                  <button onClick={connect} className="px-6 h-11 flex items-center gap-2 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
+                  <button onClick={connect} className="px-6 h-11 flex items-center gap-2 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
                     Connect Wallet
                   </button>
                 </div>
@@ -670,7 +661,7 @@ export default function GroupsPage() {
                       Start a group savings pool to pay or save together.
                     </p>
                   </div>
-                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-1 px-5 h-10 flex items-center gap-1.5 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
+                  <button onClick={() => { setOpen(true); setStep(1); }} className="mt-1 px-5 h-10 flex items-center gap-1.5 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-sm shadow-[var(--shadow-offset)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all">
                     <Plus size={14} strokeWidth={3} /> New Group
                   </button>
                 </div>
@@ -722,19 +713,18 @@ export default function GroupsPage() {
           CREATE MODAL — 2-step
       ══════════════════════════════════════════════════════════════════════ */}
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-[rgba(26,26,46,0.4)] backdrop-blur-sm sm:justify-center sm:p-4">
+        <div className="modal-backdrop-ref">
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-[calc(100%-48px)] max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-[24px] overflow-hidden"
-            style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
+            className="bottom-sheet-ref"
           >
             {/* ── Modal top bar ── */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-5 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className={`h-2 w-6 rounded-full border-2 border-[var(--border-color)] ${step === 1 ? "bg-[var(--color-primary)]" : "bg-[#d1d5db]"}`} />
-                <span className={`h-2 w-2 rounded-full border-2 border-[var(--border-color)] ${step === 2 ? "bg-[var(--color-secondary)]" : "bg-[#d1d5db]"}`} />
-                <h2 className="ml-1 truncate text-[14px] font-extrabold text-[var(--border-color)] uppercase tracking-wide">
+            <div className="modal-header-ref">
+              <div className="modal-header-left-ref">
+                <span className="step-indicator-dash-ref" />
+                <span className="step-indicator-dot-ref" />
+                <h2 className="modal-header-title-ref">
                   {step === 1 ? "1 — Group Details" : "2 — Add Members"}
                 </h2>
               </div>
@@ -742,9 +732,9 @@ export default function GroupsPage() {
                 type="button"
                 onClick={closeModal}
                 disabled={creating}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[var(--border-width)] border-[var(--border-color)] bg-[var(--color-surface)] shadow-[2px_2px_0px_var(--border-color)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                className="modal-close-btn-ref"
               >
-                <X size={16} strokeWidth={3} color="var(--border-color)" />
+                ✕
               </button>
             </div>
 
@@ -768,7 +758,7 @@ export default function GroupsPage() {
                         type="text"
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
-                        className={inp(formErrs.title)}
+                        className={inp(formErrs.title) + " memphis-input-teal-ref"}
                         placeholder="e.g. Trip to Bali 🌴"
                         disabled={creating}
                       />
@@ -779,32 +769,32 @@ export default function GroupsPage() {
                         type="text"
                         value={formRecipient}
                         onChange={(e) => setFormRecipient(e.target.value)}
-                        className={inp(formErrs.recipient) + " font-mono text-[13px]"}
+                        className={inp(formErrs.recipient)}
                         placeholder="0x..."
                         disabled={creating}
                       />
                     </Field>
 
-                    <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
-                      <Field label="Target" hint="total cUSD" error={formErrs.target}>
-                        <div className="relative">
+                    <div className="input-row-ref">
+                      <div style={{ flex: 1.1 }}><Field label="Target" hint="total cUSD" error={formErrs.target}>
+                        <div className="input-wrapper-inner-ref">
                           <input
                             type="number"
                             min="0.01"
                             step="0.01"
                             value={formTarget}
                             onChange={(e) => setFormTarget(e.target.value)}
-                            className={inp(formErrs.target) + " pr-20"}
+                            className={inp(formErrs.target) + " input-inner-field-ref"}
                             placeholder="0.00"
                             disabled={creating}
                           />
-                          <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-2 py-0.5 text-[11px] font-black text-[var(--border-color)] pointer-events-none uppercase">
+                          <span className="currency-badge-ref">
                             cUSD
                           </span>
                         </div>
-                      </Field>
+                      </Field></div>
 
-                      <Field label="Deadline" error={formErrs.deadline}>
+                      <div className=""><Field label="Deadline" error={formErrs.deadline}>
                         <input
                           type="date"
                           value={formDeadlineDate}
@@ -813,7 +803,7 @@ export default function GroupsPage() {
                           className={inp(formErrs.deadline)}
                           disabled={creating}
                         />
-                      </Field>
+                      </Field></div>
                     </div>
 
                     {/* Per-person preview card */}
@@ -839,12 +829,10 @@ export default function GroupsPage() {
                 {/* ── STEP 2 ── */}
                 {step === 2 && (
                   <>
-                    <div className="bg-[var(--color-secondary)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] p-3 flex items-center justify-between gap-3">
+                    <div className="mb-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
                       <div>
-                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
-                          Creating
-                        </div>
-                        <div className="max-w-[190px] truncate text-[15px] font-extrabold text-white">{formTitle}</div>
+                        <div className="text-[12px] font-semibold text-[var(--color-text-secondary)]">Select participating members:</div>
+                        <div className="max-w-[190px] truncate text-[13px] font-bold text-[var(--border-color)]">{formTitle}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
@@ -858,7 +846,7 @@ export default function GroupsPage() {
                       <Field label="Group Members" hint="invite friends" error={undefined}>
                         <div className="flex flex-col gap-2.5">
                           {formMembers.map((m, i) => (
-                            <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-2.5 flex flex-col gap-2">
+                            <div key={i} className="member-select-item-ref flex-col items-stretch gap-2">
                               <div className="flex items-center gap-2">
                                 <div
                                   style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)", boxShadow: "2px 2px 0 var(--border-color)" }}
@@ -919,7 +907,7 @@ export default function GroupsPage() {
                         type="button"
                         onClick={addMember}
                         disabled={creating}
-                        className="w-full h-11 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-[11px] text-[var(--color-text-secondary)] hover:bg-white transition-colors"
+                        className="btn-ghost w-full border-dashed"
                       >
                         <UserPlus size={13} strokeWidth={2.5} />
                         Add Another Member
@@ -946,14 +934,14 @@ export default function GroupsPage() {
               </div>
 
               {/* ── Footer ── */}
-              <div className="shrink-0 px-5 py-5 border-t-0 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
+              <div className="modal-footer-btns-ref">
                 {step === 2 ? (
                   <button
                     type="button"
                     onClick={() => setStep(1)}
                     disabled={creating}
-                    style={{ height: 48, background: "var(--color-bg)", color: "var(--color-text-secondary)" }}
-                    className="w-20 border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                    
+                    className="btn-ghost"
                   >
                     ← Back
                   </button>
@@ -962,8 +950,8 @@ export default function GroupsPage() {
                     type="button"
                     onClick={closeModal}
                     disabled={creating}
-                    style={{ height: 48, background: "var(--color-bg)", color: "var(--color-text-secondary)" }}
-                    className="flex-1 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                    
+                    className="btn-ghost"
                   >
                     Cancel
                   </button>
