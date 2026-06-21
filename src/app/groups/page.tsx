@@ -174,10 +174,10 @@ function Field({
 
 const inp = (err?: string) =>
   [
-    "h-12 w-full font-semibold text-[14px] text-[var(--color-text-primary)]",
-    "bg-white rounded-xl border-2 outline-none px-4 transition-colors duration-150",
+    "h-12 w-full font-medium text-[14px] text-[var(--color-text-primary)]",
+    "bg-[var(--color-surface)] rounded-[var(--border-radius)] border-[var(--border-width)] outline-none px-3 transition-colors duration-150",
     "placeholder:text-[var(--color-text-tertiary)] placeholder:font-normal",
-    "focus:border-[var(--color-secondary)]",
+    "focus:border-[var(--color-primary)]",
     err ? "border-[var(--color-danger)]" : "border-[var(--border-color)]",
   ].join(" ");
 
@@ -722,31 +722,19 @@ export default function GroupsPage() {
           CREATE MODAL — 2-step
       ══════════════════════════════════════════════════════════════════════ */}
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-black/60 backdrop-blur-sm sm:justify-center sm:p-4">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-[rgba(26,26,46,0.4)] backdrop-blur-sm sm:justify-center sm:p-4">
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-bg)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden"
-            style={{ boxShadow: "0 -6px 0 var(--border-color)", maxHeight: "92dvh" }}
+            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden"
+            style={{ boxShadow: "0 -10px 30px rgba(26, 26, 46, 0.15)", maxHeight: "92dvh" }}
           >
             {/* ── Modal top bar ── */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-4 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
-              <div className="flex items-center gap-3">
-                {/* Step indicator */}
-                <div className="flex items-center gap-1.5">
-                  {([1, 2] as const).map((s) => (
-                    <div
-                      key={s}
-                      className={`h-2 rounded-full transition-all duration-300 ${step === s
-                        ? "w-6 bg-[var(--color-primary)]"
-                        : step > s
-                          ? "w-2 bg-[var(--color-secondary)]"
-                          : "w-2 bg-[var(--border-color)] opacity-20"
-                        }`}
-                    />
-                  ))}
-                </div>
-                <h2 className="text-[13px] font-extrabold text-[var(--border-color)] uppercase tracking-widest">
+            <div className="shrink-0 flex items-center justify-between px-4 py-4 bg-[var(--color-surface)] border-b-2 border-[var(--border-color)]">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className={`h-2 w-6 rounded-full border-2 border-[var(--border-color)] ${step === 1 ? "bg-[var(--color-primary)]" : "bg-[#d1d5db]"}`} />
+                <span className={`h-2 w-2 rounded-full border-2 border-[var(--border-color)] ${step === 2 ? "bg-[var(--color-secondary)]" : "bg-[#d1d5db]"}`} />
+                <h2 className="ml-1 truncate text-[14px] font-extrabold text-[var(--border-color)] uppercase tracking-wide">
                   {step === 1 ? "1 — Group Details" : "2 — Add Members"}
                 </h2>
               </div>
@@ -754,14 +742,14 @@ export default function GroupsPage() {
                 type="button"
                 onClick={closeModal}
                 disabled={creating}
-                className="w-8 h-8 flex items-center justify-center border-2 border-[var(--border-color)] rounded-lg bg-white hover:bg-[var(--color-accent)] transition-colors shrink-0"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[var(--border-width)] border-[var(--border-color)] bg-[var(--color-surface)] shadow-[2px_2px_0px_var(--border-color)] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
               >
                 <X size={16} strokeWidth={3} color="var(--border-color)" />
               </button>
             </div>
 
             <form onSubmit={handleCreate} className="flex flex-col min-h-0 flex-1">
-              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5">
+              <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4">
 
                 {/* ── STEP 1 ── */}
                 {step === 1 && (
@@ -797,7 +785,7 @@ export default function GroupsPage() {
                       />
                     </Field>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
                       <Field label="Target" hint="total cUSD" error={formErrs.target}>
                         <div className="relative">
                           <input
@@ -806,11 +794,11 @@ export default function GroupsPage() {
                             step="0.01"
                             value={formTarget}
                             onChange={(e) => setFormTarget(e.target.value)}
-                            className={inp(formErrs.target) + " pr-14"}
+                            className={inp(formErrs.target) + " pr-20"}
                             placeholder="0.00"
                             disabled={creating}
                           />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[var(--border-color)] pointer-events-none uppercase">
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md border-2 border-[var(--border-color)] bg-[var(--color-surface)] px-2 py-0.5 text-[11px] font-black text-[var(--border-color)] pointer-events-none uppercase">
                             cUSD
                           </span>
                         </div>
@@ -851,12 +839,12 @@ export default function GroupsPage() {
                 {/* ── STEP 2 ── */}
                 {step === 2 && (
                   <>
-                    <div className="bg-[var(--color-secondary)] border-2 border-[var(--border-color)] rounded-2xl p-4 flex items-center justify-between">
+                    <div className="bg-[var(--color-secondary)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] p-3 flex items-center justify-between gap-3">
                       <div>
                         <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
                           Creating
                         </div>
-                        <div className="text-[15px] font-extrabold text-white">{formTitle}</div>
+                        <div className="max-w-[190px] truncate text-[15px] font-extrabold text-white">{formTitle}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] font-extrabold uppercase tracking-widest text-white opacity-80">
@@ -870,10 +858,10 @@ export default function GroupsPage() {
                       <Field label="Group Members" hint="invite friends" error={undefined}>
                         <div className="flex flex-col gap-2.5">
                           {formMembers.map((m, i) => (
-                            <div key={i} className="flex flex-col gap-1.5">
+                            <div key={i} className="rounded-[var(--border-radius)] border-2 border-[var(--border-color)] bg-[var(--color-surface)] p-2.5 flex flex-col gap-2">
                               <div className="flex items-center gap-2">
                                 <div
-                                  style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)" }}
+                                  style={{ width: 28, height: 28, borderRadius: 8, background: "var(--color-accent)", border: "2px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 900, fontSize: 11, color: "var(--border-color)", boxShadow: "2px 2px 0 var(--border-color)" }}
                                 >
                                   {i + 1}
                                 </div>
@@ -918,7 +906,7 @@ export default function GroupsPage() {
                                 )}
                               </div>
                               {formErrs[`m_${i}`] && (
-                                <p className="ml-9 text-[11px] font-bold text-[var(--color-danger)] flex items-center gap-1">
+                                <p className="text-[11px] font-bold text-[var(--color-danger)] flex items-center gap-1">
                                   <AlertCircle size={11} /> {formErrs[`m_${i}`]}
                                 </p>
                               )}
@@ -931,7 +919,7 @@ export default function GroupsPage() {
                         type="button"
                         onClick={addMember}
                         disabled={creating}
-                        className="w-full h-10 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--border-color)] rounded-xl font-bold uppercase text-[11px] text-[var(--color-text-secondary)] hover:bg-white transition-colors"
+                        className="w-full h-11 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-[11px] text-[var(--color-text-secondary)] hover:bg-white transition-colors"
                       >
                         <UserPlus size={13} strokeWidth={2.5} />
                         Add Another Member
@@ -943,7 +931,7 @@ export default function GroupsPage() {
                           <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--border-color)]">
                             Each pays
                           </span>
-                          <span className="font-black font-mono text-[var(--border-color)]">
+                          <span className="font-black font-mono text-[var(--border-color)] whitespace-nowrap">
                             {(
                               Number(formTarget) /
                               Math.max(1, formMembers.filter((m) => m.addr.trim()).length)
@@ -958,14 +946,14 @@ export default function GroupsPage() {
               </div>
 
               {/* ── Footer ── */}
-              <div className="shrink-0 px-5 py-4 border-t-2 border-[var(--border-color)] bg-white flex gap-3">
+              <div className="shrink-0 px-4 py-4 border-t-2 border-[var(--border-color)] bg-[var(--color-surface)] flex gap-3">
                 {step === 2 ? (
                   <button
                     type="button"
                     onClick={() => setStep(1)}
                     disabled={creating}
                     style={{ height: 48, background: "var(--color-bg)", color: "var(--color-text-secondary)" }}
-                    className="w-16 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                    className="w-20 border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
                   >
                     ← Back
                   </button>
