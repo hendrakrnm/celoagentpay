@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, Clock3, MessageCircle, Users } from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "Chat", icon: MessageCircle },
+  { href: "/wallet", label: "Chat", icon: MessageCircle },
   { href: "/history", label: "History", icon: Clock3 },
   { href: "/groups", label: "Groups", icon: Users },
   { href: "/schedules", label: "Plans", icon: CalendarDays },
