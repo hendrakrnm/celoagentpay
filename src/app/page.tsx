@@ -195,7 +195,9 @@ export default function LandingPage() {
             <a href="#how-it-works" className="hover:text-[#4db8a8] transition-colors">How it Works</a>
             <a href="#faq" className="hover:text-[#f5d76e] transition-colors">FAQs</a>
           </div>
-          <a href="/wallet" className="bg-[#4db8a8] text-[#1a1a2e] py-2 px-5 neo-border neo-shadow neo-interactive font-bold">Launch Simulator</a>
+          <a href="#simulator" className="bg-[#4db8a8] text-[#1a1a2e] py-2 px-5 neo-border neo-shadow neo-interactive font-bold">
+            Launch Simulator
+          </a>
         </div>
       </nav>
 
@@ -255,7 +257,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="features" className="mb-32 gsap-reveal relative z-10"><h2 className="text-4xl md:text-5xl font-black text-center mb-16">Wallet superpowers. <br /> <span className="bg-[#4db8a8] px-2 inline-block rotate-1 neo-border">Minus the headache.</span></h2><div className="grid grid-cols-1 md:grid-cols-3 gap-8"><Feature color="bg-[#e8879f]" title="AI Payment Assistant">Just tell your wallet what to do. &quot;Pay my rent&quot; or &quot;Swap 50 cUSD to CELO&quot;. The agent handles the complex routing under the hood.</Feature><Feature color="bg-[#f5d76e] md:-translate-y-4" title="Goal-Based Fundraising">Create shared pools for trips, pizzas, or charity. The agent auto-pings participants and tracks who paid with playful reminders.</Feature><Feature color="bg-[#4db8a8]" title="Autopilot Schedules">&quot;Send $20 to Mom every Friday.&quot; Setup streaming payments or recurring subscriptions directly from your self-custody balance.</Feature></div></section>
+        <section id="features" className="mb-32 gsap-reveal relative z-10"><h2 className="text-4xl md:text-5xl font-black text-center mb-16">Wallet superpowers. <br /> <span className="bg-[#4db8a8] px-2 inline-block rotate-1 neo-border">Minus the headache.</span></h2><div className="grid grid-cols-1 md:grid-cols-3 gap-8"><Feature color="bg-[#e8879f]" title="AI Payment Assistant" iconPath="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">Just tell your wallet what to do. &quot;Pay my rent&quot; or &quot;Swap 50 cUSD to CELO&quot;. The agent handles the complex routing under the hood.</Feature><Feature color="bg-[#f5d76e] transform md:-translate-y-4" title="Goal-Based Fundraising" iconPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">Create shared pools for trips, pizzas, or charity. The agent auto-pings participants and tracks who paid with playful reminders.</Feature><Feature color="bg-[#4db8a8]" title="Autopilot Schedules" iconPath="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">&quot;Send $20 to Mom every Friday.&quot; Setup streaming payments or recurring subscriptions directly from your self-custody balance.</Feature></div></section>
 
         <section id="how-it-works" className="mb-32 gsap-reveal relative z-10"><div className="bg-[#fffef7] border-[3px] border-[#1a1a2e] rounded-3xl p-10 md:p-16 shadow-[8px_8px_0px_#1a1a2e]"><h2 className="text-4xl md:text-5xl font-black mb-12">How it Works</h2><div className="space-y-12"><Step num="01" color="bg-[#e8879f]" title="Formulate Intent">Type your payment request naturally in the chat interface. The AI parses recipients, amounts, and tokens instantly.</Step><Step num="02" color="bg-[#f5d76e]" title="Verify Intent Card">The agent generates an interactive &quot;Intent Card&quot;. Review the exact transaction details, gas fees (almost zero on Celo), and recipients.</Step><Step num="03" color="bg-[#4db8a8]" title="On-Chain Finality">Tap confirm. The transaction is signed locally on your device and settled on the Celo network in sub-seconds.</Step></div></div></section>
 
@@ -280,8 +282,8 @@ function PhoneNav({ label, path, cls }: { label: string; path: string; cls: stri
   return <button className={`flex flex-col items-center gap-1 ${cls} hover:text-[#1a1a2e] font-semibold transition-colors`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={label === "Chat" ? 2.5 : 2} d={path} /></svg><span className="text-[10px]">{label}</span></button>;
 }
 
-function Feature({ color, title, children }: { color: string; title: string; children: React.ReactNode }) {
-  return <div className={`${color} p-8 neo-border neo-shadow neo-interactive flex flex-col h-full`}><div className="w-14 h-14 bg-[#fffef7] rounded-full neo-border flex items-center justify-center mb-6 shadow-[2px_2px_0px_#1a1a2e]"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg></div><h3 className="text-2xl font-bold mb-4">{title}</h3><p className="font-medium text-[#1a1a2e]/80 flex-grow">{children}</p></div>;
+function Feature({ color, title, iconPath, children }: { color: string; title: string; iconPath: string; children: React.ReactNode }) {
+  return <div className={`${color} neo-card p-8 neo-border neo-shadow neo-interactive flex flex-col h-full`}><div className="w-14 h-14 bg-[#fffef7] rounded-full neo-border flex items-center justify-center mb-6 shadow-[2px_2px_0px_#1a1a2e]"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={iconPath} /></svg></div><h3 className="text-2xl font-bold mb-4">{title}</h3><p className="font-medium text-[#1a1a2e]/80 flex-grow">{children}</p></div>;
 }
 
 function Step({ num, color, title, children }: { num: string; color: string; title: string; children: React.ReactNode }) {
