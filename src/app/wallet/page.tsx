@@ -1,0 +1,13 @@
+"use client";
+
+import { PageHeader } from "@/components/layout/PageHeader";
+import { ChatThread } from "@/components/chat";
+
+export default function WalletPage() {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <PageHeader title="Wallet" />
+      <ChatThread />
+    </div>
+  );
+}
