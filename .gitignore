@@ -66,6 +66,7 @@ Thumbs.db
 
 # markdown notes
 docs/
+docs/codebase-issues-summary.md
 EXECUTION_COMPLETE.md
 BUILD_SUMMARY.md
 firstplan.md
