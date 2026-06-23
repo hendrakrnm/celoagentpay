@@ -3,7 +3,6 @@
 import "@/styles/landing.css";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 interface Toast {
   id: string;
@@ -80,7 +79,8 @@ export default function LandingPage() {
       <nav className="lp-nav">
         <div className="lp-nav-inner">
           <div className="lp-logo">
-            <Image src="/icon.png" alt="CeloAgentPay" width={40} height={40} className="lp-logo-img" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.png" alt="CeloAgentPay" className="lp-logo-img" />
             <span className="lp-logo-text">CeloAgentPay</span>
           </div>
           <div className="lp-nav-links">
@@ -365,7 +365,8 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-footer-inner">
           <div className="lp-footer-logo">
-            <Image src="/icon.png" alt="CeloAgentPay" width={32} height={32} style={{ borderRadius: "50%", border: "3px solid #1a1a2e", boxShadow: "2px 2px 0 #1a1a2e" }} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.png" alt="CeloAgentPay" className="lp-footer-logo-img" />
             <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}>CeloAgentPay</span>
           </div>
           <div className="lp-footer-links">
