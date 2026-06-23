@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "../styles/globals.css";
-import { BottomNav } from "@/components/layout/BottomNav";
 import { Providers } from "@/providers";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -31,10 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`h-full ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}>
       <body className="h-full bg-[var(--color-bg)] text-[var(--color-text-primary)]">
         <Providers>
-          <div className="app-shell">
-            <main className="flex min-h-0 flex-1 flex-col">{children}</main>
-            <BottomNav />
-          </div>
+          {children}
         </Providers>
       </body>
     </html>
