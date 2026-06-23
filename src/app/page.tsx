@@ -428,7 +428,7 @@ export default function LandingPage() {
         {/* How It Works Section */}
         <section id="how-it-works" className="mb-24 md:mb-36 gsap-reveal scroll-mt-24">
           <div className="bg-[#fffef7] border-3 border-[#1a1a2e] rounded-[32px] p-8 md:p-16 shadow-[8px_8px_0px_#1a1a2e]">
-            <h2 class="text-3xl md:text-5xl font-black mb-12 select-none">How it Works</h2>
+            <h2 className="text-3xl md:text-5xl font-black mb-12 select-none">How it Works</h2>
             
             <div className="space-y-12">
               {/* Step 1 */}
