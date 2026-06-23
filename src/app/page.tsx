@@ -398,99 +398,117 @@ function ThreeCanvasWrapper() {
       // Guard: component may have unmounted while the module was loading
       if (!container.isConnected) return;
 
-      const {
-        Scene, PerspectiveCamera, WebGLRenderer, Group, Mesh,
-        MeshBasicMaterial, EdgesGeometry, LineSegments, LineBasicMaterial,
-        BoxGeometry, ConeGeometry, TorusGeometry, OctahedronGeometry,
-      } = mod;
+      // Check WebGL support before attempting to create a renderer
+      const testCanvas = document.createElement("canvas");
+      const gl = testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
+      if (!gl) {
+        // WebGL not available — silently skip the background, no crash
+        console.info("[ThreeBackground] WebGL not supported, skipping 3D background.");
+        return;
+      }
 
-      const scene = new Scene();
-      const camera = new PerspectiveCamera(
-        60, window.innerWidth / window.innerHeight, 0.1, 200
-      );
-      camera.position.z = 30;
+      try {
+        const {
+          Scene, PerspectiveCamera, WebGLRenderer, Group, Mesh,
+          MeshBasicMaterial, EdgesGeometry, LineSegments, LineBasicMaterial,
+          BoxGeometry, ConeGeometry, TorusGeometry, OctahedronGeometry,
+        } = mod;
 
-      const renderer = new WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      container.appendChild(renderer.domElement);
+        const scene = new Scene();
+        const camera = new PerspectiveCamera(
+          60, window.innerWidth / window.innerHeight, 0.1, 200
+        );
+        camera.position.z = 30;
 
-      const COLORS = [0xe8879f, 0x4db8a8, 0xf5d76e];
-      const DARK = 0x1a1a2e;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const objects: any[] = [];
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const addShape = (geo: any, color: number, x: number, y: number, z: number, s: number) => {
-        const g = new Group();
-        g.add(new Mesh(geo, new MeshBasicMaterial({ color })));
-        const edges = new EdgesGeometry(geo);
-        g.add(new LineSegments(edges, new LineBasicMaterial({ color: DARK })));
-        g.position.set(x, y, z);
-        g.scale.setScalar(s);
-        g.userData = {
-          rx: (Math.random() - 0.5) * 0.012,
-          ry: (Math.random() - 0.5) * 0.012,
-          yBase: y,
-          yOff: Math.random() * Math.PI * 2,
-        };
-        scene.add(g);
-        objects.push(g);
-      };
-
-      // Shapes placed within the visible frustum — camera at z=30, FOV 60°
-      // Rough visible width at z=0 is ≈ 2 * tan(30°) * 30 ≈ 34 units wide
-      addShape(new BoxGeometry(2, 2, 2),          COLORS[0], -14,  8,  0, 1.2);
-      addShape(new ConeGeometry(1.5, 3, 4),        COLORS[2], -12, -6,  2, 1.0);
-      addShape(new TorusGeometry(1.2, 0.4, 8, 16), COLORS[1], -16,  0, -2, 1.0);
-      addShape(new OctahedronGeometry(2),           COLORS[1],  -6,-10,  1, 1.0);
-      addShape(new OctahedronGeometry(1.5),         COLORS[0],  14,  8,  0, 0.9);
-      addShape(new BoxGeometry(1.5, 1.5, 1.5),      COLORS[2],  16, -8, -3, 1.2);
-      addShape(new TorusGeometry(2, 0.5, 8, 16),    COLORS[1],  12, -2, -4, 0.9);
-      addShape(new BoxGeometry(1, 1, 1),             COLORS[2],  -4, 12, -2, 1.8);
-      addShape(new ConeGeometry(1, 2.5, 4),          COLORS[0],   6, 14, -3, 1.3);
-      addShape(new TorusGeometry(1, 0.35, 8, 16),   COLORS[2],   4,  6, -5, 1.6);
-
-      let mx = 0, my = 0;
-      const onMouse = (e: MouseEvent) => {
-        mx = e.clientX - window.innerWidth / 2;
-        my = e.clientY - window.innerHeight / 2;
-      };
-      window.addEventListener("mousemove", onMouse);
-
-      const onResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        const renderer = new WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-      };
-      window.addEventListener("resize", onResize);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
 
-      const tick = (time: number) => {
-        const t = time * 0.001;
-        objects.forEach((o) => {
-          o.rotation.x += o.userData.rx;
-          o.rotation.y += o.userData.ry;
-          o.position.y = o.userData.yBase + Math.sin(t + o.userData.yOff) * 0.6;
-        });
-        // Subtle parallax with mouse
-        camera.position.x += (mx * 0.003 - camera.position.x) * 0.04;
-        camera.position.y += (-my * 0.003 - camera.position.y) * 0.04;
-        camera.lookAt(scene.position);
-        renderer.render(scene, camera);
+        const COLORS = [0xe8879f, 0x4db8a8, 0xf5d76e];
+        const DARK = 0x1a1a2e;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const objects: any[] = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const addShape = (geo: any, color: number, x: number, y: number, z: number, s: number) => {
+          const g = new Group();
+          g.add(new Mesh(geo, new MeshBasicMaterial({ color })));
+          const edges = new EdgesGeometry(geo);
+          g.add(new LineSegments(edges, new LineBasicMaterial({ color: DARK })));
+          g.position.set(x, y, z);
+          g.scale.setScalar(s);
+          g.userData = {
+            rx: (Math.random() - 0.5) * 0.012,
+            ry: (Math.random() - 0.5) * 0.012,
+            yBase: y,
+            yOff: Math.random() * Math.PI * 2,
+          };
+          scene.add(g);
+          objects.push(g);
+        };
+
+        // Shapes placed within the visible frustum — camera at z=30, FOV 60°
+        // Rough visible width at z=0 is ≈ 2 * tan(30°) * 30 ≈ 34 units wide
+        addShape(new BoxGeometry(2, 2, 2),          COLORS[0], -14,  8,  0, 1.2);
+        addShape(new ConeGeometry(1.5, 3, 4),        COLORS[2], -12, -6,  2, 1.0);
+        addShape(new TorusGeometry(1.2, 0.4, 8, 16), COLORS[1], -16,  0, -2, 1.0);
+        addShape(new OctahedronGeometry(2),           COLORS[1],  -6,-10,  1, 1.0);
+        addShape(new OctahedronGeometry(1.5),         COLORS[0],  14,  8,  0, 0.9);
+        addShape(new BoxGeometry(1.5, 1.5, 1.5),      COLORS[2],  16, -8, -3, 1.2);
+        addShape(new TorusGeometry(2, 0.5, 8, 16),    COLORS[1],  12, -2, -4, 0.9);
+        addShape(new BoxGeometry(1, 1, 1),             COLORS[2],  -4, 12, -2, 1.8);
+        addShape(new ConeGeometry(1, 2.5, 4),          COLORS[0],   6, 14, -3, 1.3);
+        addShape(new TorusGeometry(1, 0.35, 8, 16),   COLORS[2],   4,  6, -5, 1.6);
+
+        let mx = 0, my = 0;
+        const onMouse = (e: MouseEvent) => {
+          mx = e.clientX - window.innerWidth / 2;
+          my = e.clientY - window.innerHeight / 2;
+        };
+        window.addEventListener("mousemove", onMouse);
+
+        const onResize = () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+        window.addEventListener("resize", onResize);
+
+        const tick = (time: number) => {
+          const t = time * 0.001;
+          objects.forEach((o) => {
+            o.rotation.x += o.userData.rx;
+            o.rotation.y += o.userData.ry;
+            o.position.y = o.userData.yBase + Math.sin(t + o.userData.yOff) * 0.6;
+          });
+          // Subtle parallax with mouse
+          camera.position.x += (mx * 0.003 - camera.position.x) * 0.04;
+          camera.position.y += (-my * 0.003 - camera.position.y) * 0.04;
+          camera.lookAt(scene.position);
+          renderer.render(scene, camera);
+          animId = requestAnimationFrame(tick);
+        };
         animId = requestAnimationFrame(tick);
-      };
-      animId = requestAnimationFrame(tick);
 
-      // Store cleanup so the outer useEffect return can call it
-      cleanupFn = () => {
-        window.removeEventListener("mousemove", onMouse);
-        window.removeEventListener("resize", onResize);
-        cancelAnimationFrame(animId);
-        try {
-          if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
-        } catch {/* ignore */}
-        renderer.dispose();
-      };
+        // Store cleanup so the outer useEffect return can call it
+        cleanupFn = () => {
+          window.removeEventListener("mousemove", onMouse);
+          window.removeEventListener("resize", onResize);
+          cancelAnimationFrame(animId);
+          try {
+            if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+          } catch {/* ignore */}
+          renderer.dispose();
+        };
+      } catch (err) {
+        // WebGL renderer creation failed (e.g. GPU process crashed, context limit reached)
+        // Fail silently — the landing page is fully functional without the background
+        console.warn("[ThreeBackground] Could not initialize WebGL renderer:", err);
+      }
+    }).catch((err) => {
+      // Dynamic import of "three" itself failed — also silent
+      console.warn("[ThreeBackground] Failed to load three.js:", err);
     });
 
     // This is the actual useEffect cleanup — called on unmount
