@@ -450,16 +450,16 @@ function ThreeCanvasWrapper() {
 
         // Shapes placed within the visible frustum — camera at z=30, FOV 60°
         // Rough visible width at z=0 is ≈ 2 * tan(30°) * 30 ≈ 34 units wide
-        addShape(new BoxGeometry(2, 2, 2),          COLORS[0], -14,  8,  0, 1.2);
-        addShape(new ConeGeometry(1.5, 3, 4),        COLORS[2], -12, -6,  2, 1.0);
-        addShape(new TorusGeometry(1.2, 0.4, 8, 16), COLORS[1], -16,  0, -2, 1.0);
-        addShape(new OctahedronGeometry(2),           COLORS[1],  -6,-10,  1, 1.0);
-        addShape(new OctahedronGeometry(1.5),         COLORS[0],  14,  8,  0, 0.9);
-        addShape(new BoxGeometry(1.5, 1.5, 1.5),      COLORS[2],  16, -8, -3, 1.2);
-        addShape(new TorusGeometry(2, 0.5, 8, 16),    COLORS[1],  12, -2, -4, 0.9);
-        addShape(new BoxGeometry(1, 1, 1),             COLORS[2],  -4, 12, -2, 1.8);
-        addShape(new ConeGeometry(1, 2.5, 4),          COLORS[0],   6, 14, -3, 1.3);
-        addShape(new TorusGeometry(1, 0.35, 8, 16),   COLORS[2],   4,  6, -5, 1.6);
+        addShape(new BoxGeometry(2, 2, 2), COLORS[0], -14, 8, 0, 1.2);
+        addShape(new ConeGeometry(1.5, 3, 4), COLORS[2], -12, -6, 2, 1.0);
+        addShape(new TorusGeometry(1.2, 0.4, 8, 16), COLORS[1], -16, 0, -2, 1.0);
+        addShape(new OctahedronGeometry(2), COLORS[1], -6, -10, 1, 1.0);
+        addShape(new OctahedronGeometry(1.5), COLORS[0], 14, 8, 0, 0.9);
+        addShape(new BoxGeometry(1.5, 1.5, 1.5), COLORS[2], 16, -8, -3, 1.2);
+        addShape(new TorusGeometry(2, 0.5, 8, 16), COLORS[1], 12, -2, -4, 0.9);
+        addShape(new BoxGeometry(1, 1, 1), COLORS[2], -4, 12, -2, 1.8);
+        addShape(new ConeGeometry(1, 2.5, 4), COLORS[0], 6, 14, -3, 1.3);
+        addShape(new TorusGeometry(1, 0.35, 8, 16), COLORS[2], 4, 6, -5, 1.6);
 
         let mx = 0, my = 0;
         const onMouse = (e: MouseEvent) => {
@@ -498,7 +498,7 @@ function ThreeCanvasWrapper() {
           cancelAnimationFrame(animId);
           try {
             if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
-          } catch {/* ignore */}
+          } catch {/* ignore */ }
           renderer.dispose();
         };
       } catch (err) {
