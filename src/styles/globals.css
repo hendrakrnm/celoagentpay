@@ -394,3 +394,59 @@ button { cursor: pointer; background: none; }
 @keyframes loading-dots { 0%, 20%, 50%, 80%, 100% { opacity: 0.4; } 40% { opacity: 1; } }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
 input:focus-visible { outline: none; }
+
+/* Neo-Brutalist Utilities for Landing Page */
+.neo-border {
+  border: 3px solid var(--border-color);
+}
+
+.neo-shadow {
+  box-shadow: var(--shadow-offset);
+  border-radius: var(--border-radius);
+}
+
+.neo-shadow-lg {
+  box-shadow: 8px 8px 0px var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.neo-interactive {
+  transition: all 0.15s ease-out;
+}
+
+.neo-interactive:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--border-color);
+}
+
+.neo-interactive:active, .neo-press {
+  transform: translate(4px, 4px) !important;
+  box-shadow: 0px 0px 0px var(--border-color) !important;
+}
+
+/* FAQ Accordion */
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+.faq-item.active .faq-content {
+  max-height: 200px; /* Arbitrary large height */
+  padding: 0 1.5rem 1rem 1.5rem;
+}
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* Phone Simulator Specifics */
+.phone-mockup {
+  width: 320px;
+  height: 640px;
+  background: #fffef7;
+  border-radius: 36px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
