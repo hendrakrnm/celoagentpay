@@ -6,7 +6,6 @@ import {
   Pencil,
   Plus,
   Trash2,
-  X,
   Zap,
   AlertCircle,
 } from "lucide-react";
@@ -125,9 +124,9 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)] pl-1">
-        {label}
+    <div className="input-group-ref">
+      <label className="input-label-ref">
+        <span>{label}</span>
       </label>
       {children}
       {error && (
@@ -143,16 +142,9 @@ function Field({
 /* ─── Shared input class ────────────────────────────────────────── */
 const inputCls = (error?: string) =>
   [
-    "h-12 w-full font-bold text-[14px] text-[var(--color-text-primary)]",
-    "bg-white rounded-[12px]",
-    "border-2",
-    "outline-none px-4 transition-all duration-150",
-    "placeholder:text-[var(--color-text-tertiary)] placeholder:font-medium",
-    "focus:border-[var(--color-secondary)] focus:ring-2 focus:ring-[var(--color-secondary)]/15",
-    error
-      ? "border-[var(--color-danger)]"
-      : "border-[var(--border-color)]",
-  ].join(" ");
+    "memphis-input-ref",
+    error ? "border-[var(--color-danger)]" : "",
+  ].filter(Boolean).join(" ");
 
 export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -341,7 +333,7 @@ export default function SchedulesPage() {
         <button
           type="button"
           onClick={openCreateModal}
-          className="w-full flex items-center justify-center gap-2 h-14 bg-[var(--color-accent)] text-[var(--border-color)] border-[var(--border-width)] border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-sm shadow-[var(--shadow-offset)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-[var(--border-radius)] border-[3px] border-[var(--border-color)] bg-[var(--color-accent)] text-sm font-bold uppercase tracking-wider text-[var(--border-color)] shadow-[var(--shadow-offset)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
         >
           <Plus size={20} strokeWidth={3} />
           New Schedule
@@ -350,38 +342,34 @@ export default function SchedulesPage() {
 
       {/* ── Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-end bg-black/60 backdrop-blur-sm sm:justify-center sm:p-4">
+        <div className="modal-backdrop-ref">
           <div className="absolute inset-0" onClick={closeModal} />
 
           <div
-            className="relative w-full max-w-[430px] flex flex-col bg-[var(--color-surface)] border-[var(--border-color)] border-t-[var(--border-width)] border-x-[var(--border-width)] sm:border-b-[var(--border-width)] rounded-t-[24px] sm:rounded-[24px] overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-200"
-            style={{ boxShadow: "0 -6px 0px var(--border-color)" }}
+            className="bottom-sheet-ref"
           >
             {/* ── Header ── */}
-            <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b-2 border-[var(--border-color)] bg-[var(--color-surface)]">
-              <div className="flex items-center gap-3">
-                <div className="schedule-icon secondary shrink-0 p-1.5 border-2 border-[var(--border-color)] rounded-lg">
-                  <CalendarDays size={18} strokeWidth={2.5} color="var(--color-surface)" />
+            <div className="modal-header-ref">
+              <div className="modal-header-left-ref">
+                <div className="modal-header-icon-ref">
+                  <CalendarDays size={18} strokeWidth={2.5} />
                 </div>
-                <h2 className="text-[15px] font-extrabold text-[var(--border-color)] uppercase tracking-widest">
+                <h2 className="modal-header-title-ref">
                   {isEditing ? "Edit Schedule" : "New Schedule"}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={closeModal}
-                className="w-8 h-8 flex items-center justify-center border-2 border-[var(--border-color)] rounded-[8px] bg-white hover:bg-[var(--color-accent)] active:translate-y-px transition-colors"
+                className="modal-close-btn-ref"
               >
-                <X size={18} strokeWidth={3} color="var(--border-color)" />
+                ✕
               </button>
             </div>
 
             {/* ── Form body ── */}
-            <form
-              onSubmit={handleSubmit}
-              className="flex min-h-0 flex-1 flex-col"
-            >
-              <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5 bg-[var(--color-surface)]">
+            <form onSubmit={handleSubmit}>
+              <div>
                 {/* Title */}
                 <Field label="Title">
                   <input
@@ -398,7 +386,7 @@ export default function SchedulesPage() {
 
                 {/* Amount */}
                 <Field label="Amount">
-                  <div className="relative flex items-center">
+                  <div className="input-wrapper-inner-ref">
                     <input
                       required
                       min="0.01"
@@ -408,10 +396,10 @@ export default function SchedulesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, amount: e.target.value })
                       }
-                      className={inputCls() + " pr-16"}
+                      className={inputCls() + " input-inner-field-ref"}
                       placeholder="0.00"
                     />
-                    <div className="absolute right-4 text-xs font-bold text-[var(--border-color)] uppercase pointer-events-none">
+                    <div className="currency-badge-ref">
                       cUSD
                     </div>
                   </div>
@@ -433,7 +421,7 @@ export default function SchedulesPage() {
                 </Field>
 
                 {/* Date + Time side by side */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="input-row-ref">
                   <Field label="Start Date" error={errors.date}>
                     <input
                       required
@@ -471,54 +459,30 @@ export default function SchedulesPage() {
                           cadence: e.target.value as Cadence,
                         })
                       }
-                      className={inputCls() + " appearance-none pr-10 cursor-pointer"}
+                      className="memphis-select-ref"
                     >
                       <option value="One-time">One-time</option>
                       <option value="Day">Daily</option>
                       <option value="Week">Weekly</option>
                       <option value="Month">Monthly</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="var(--border-color)"
-                        strokeWidth="3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                        />
-                      </svg>
-                    </div>
                   </div>
                 </Field>
               </div>
 
               {/* ── Submit footer ── */}
-              <div className="shrink-0 px-5 py-4 border-t-2 border-[var(--border-color)] bg-white flex gap-3">
+              <div className="modal-footer-btns-ref">
                 <button
                   type="button"
                   onClick={closeModal}
-                  style={{
-                    height: "48px",
-                    backgroundColor: "var(--color-bg)",
-                    color: "var(--color-text-secondary)",
-                  }}
-                  className="flex-1 flex items-center justify-center border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase text-xs shadow-[2px_2px_0px_var(--border-color)] hover:shadow-[1px_1px_0px_var(--border-color)] hover:translate-x-px hover:translate-y-px active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  className="btn-ghost flex-1"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  style={{
-                    height: "48px",
-                    backgroundColor: "var(--color-primary)",
-                    color: "var(--color-surface)",
-                  }}
-                  className="flex-[2] flex items-center justify-center gap-2 border-2 border-[var(--border-color)] rounded-[var(--border-radius)] font-bold uppercase tracking-wider text-xs shadow-[2px_2px_0px_var(--border-color)] hover:shadow-[1px_1px_0px_var(--border-color)] hover:translate-x-px hover:translate-y-px active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                  style={{ backgroundColor: "var(--color-primary)", color: "var(--color-surface)" }}
+                  className="btn-ghost flex-1"
                 >
                   <Zap size={16} strokeWidth={3} />
                   {isEditing ? "Save" : "Create"}

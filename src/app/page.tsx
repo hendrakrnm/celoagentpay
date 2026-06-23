@@ -88,7 +88,7 @@ export default function LandingPage() {
             <a href="#how-it-works">How it Works</a>
             <a href="#faq">FAQs</a>
           </div>
-          <Link href="/chat" className="lp-cta-btn">
+          <Link href="/wallet" className="lp-cta-btn">
             Launch Wallet
           </Link>
         </div>
@@ -117,7 +117,7 @@ export default function LandingPage() {
             </p>
 
             <div className="lp-hero-btns">
-              <Link href="/chat" className="lp-btn-primary">
+              <Link href="/wallet" className="lp-btn-primary">
                 Get Started
               </Link>
               <button

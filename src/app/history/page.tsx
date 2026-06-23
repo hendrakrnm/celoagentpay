@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { ArrowDown, ArrowUp, AlertCircle, Clock3, RefreshCw, Wallet } from "lucide-react";
-import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useWallet } from "@/lib/wallet";
 import { fetchTransactionHistory, type Transaction } from "@/lib/explorer";
@@ -210,9 +209,9 @@ export default function HistoryPage() {
                     No transactions found for {activeTab === "ALL" ? "any token" : activeTab} on Celo.
                   </p>
                 </div>
-                <Link href="/chat" className="btn-ghost text-center no-underline text-[var(--color-text-primary)] hover:text-[var(--color-text-primary)]">
+                <a href="/" className="btn-ghost text-center no-underline text-[var(--color-text-primary)] hover:text-[var(--color-text-primary)]">
                   Go to Chat
-                </Link>
+                </a>
               </div>
             ) : (
               /* Grouped List */
