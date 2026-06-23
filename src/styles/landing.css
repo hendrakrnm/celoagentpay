@@ -87,19 +87,14 @@
   cursor: pointer;
 }
 
-.landing-root .lp-logo-icon {
+.landing-root .lp-logo-img {
   width: 40px;
   height: 40px;
-  background-color: #e8879f;
+  border-radius: 50%;
   border: var(--dark-border);
   box-shadow: 3px 3px 0px #1a1a2e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 16px;
-  user-select: none;
-  border-radius: 0;
+  object-fit: cover;
+  display: block;
 }
 
 .landing-root .lp-logo-text {

@@ -3,6 +3,7 @@
 import "@/styles/landing.css";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Toast {
   id: string;
@@ -79,7 +80,7 @@ export default function LandingPage() {
       <nav className="lp-nav">
         <div className="lp-nav-inner">
           <div className="lp-logo">
-            <div className="lp-logo-icon">C⚡A</div>
+            <Image src="/icon.png" alt="CeloAgentPay" width={40} height={40} className="lp-logo-img" />
             <span className="lp-logo-text">CeloAgentPay</span>
           </div>
           <div className="lp-nav-links">
@@ -364,7 +365,7 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-footer-inner">
           <div className="lp-footer-logo">
-            <div className="lp-footer-logo-icon">C⚡A</div>
+            <Image src="/icon.png" alt="CeloAgentPay" width={32} height={32} style={{ borderRadius: "50%", border: "3px solid #1a1a2e", boxShadow: "2px 2px 0 #1a1a2e" }} />
             <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}>CeloAgentPay</span>
           </div>
           <div className="lp-footer-links">
@@ -390,9 +391,11 @@ function ThreeCanvasWrapper() {
 
     const container = containerRef.current;
     let animId = 0;
+    let cleanupFn: (() => void) | null = null;
 
     import("three").then((mod) => {
-      if (!container) return;
+      // Guard: component may have unmounted while the module was loading
+      if (!container.isConnected) return;
 
       const {
         Scene, PerspectiveCamera, WebGLRenderer, Group, Mesh,
@@ -401,8 +404,10 @@ function ThreeCanvasWrapper() {
       } = mod;
 
       const scene = new Scene();
-      const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 15;
+      const camera = new PerspectiveCamera(
+        60, window.innerWidth / window.innerHeight, 0.1, 200
+      );
+      camera.position.z = 30;
 
       const renderer = new WebGLRenderer({ alpha: true, antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -422,24 +427,34 @@ function ThreeCanvasWrapper() {
         g.add(new LineSegments(edges, new LineBasicMaterial({ color: DARK })));
         g.position.set(x, y, z);
         g.scale.setScalar(s);
-        g.userData = { rx: (Math.random() - 0.5) * 0.01, ry: (Math.random() - 0.5) * 0.01, yBase: y, yOff: Math.random() * Math.PI * 2 };
+        g.userData = {
+          rx: (Math.random() - 0.5) * 0.012,
+          ry: (Math.random() - 0.5) * 0.012,
+          yBase: y,
+          yOff: Math.random() * Math.PI * 2,
+        };
         scene.add(g);
         objects.push(g);
       };
 
-      addShape(new BoxGeometry(2, 2, 2), COLORS[0], -18, 10, -5, 1.5);
-      addShape(new ConeGeometry(1.5, 3, 4), COLORS[2], -15, -8, -6, 1.3);
-      addShape(new TorusGeometry(1.2, 0.4, 8, 12), COLORS[1], -24, 2, -10, 1.2);
-      addShape(new OctahedronGeometry(2), COLORS[1], -8, -14, -8, 1.2);
-      addShape(new OctahedronGeometry(1.5), COLORS[0], 18, 12, -8, 1.1);
-      addShape(new BoxGeometry(1.5, 1.5, 1.5), COLORS[2], 22, -10, -12, 1.5);
-      addShape(new TorusGeometry(2, 0.6, 8, 12), COLORS[1], 15, -4, -15, 1.0);
-      addShape(new BoxGeometry(1, 1, 1), COLORS[2], -6, 14, -10, 2.0);
-      addShape(new ConeGeometry(1, 2, 4), COLORS[0], 8, 18, -12, 1.5);
-      addShape(new TorusGeometry(1, 0.3, 8, 12), COLORS[2], 5, 8, -20, 2.0);
+      // Shapes placed within the visible frustum — camera at z=30, FOV 60°
+      // Rough visible width at z=0 is ≈ 2 * tan(30°) * 30 ≈ 34 units wide
+      addShape(new BoxGeometry(2, 2, 2),          COLORS[0], -14,  8,  0, 1.2);
+      addShape(new ConeGeometry(1.5, 3, 4),        COLORS[2], -12, -6,  2, 1.0);
+      addShape(new TorusGeometry(1.2, 0.4, 8, 16), COLORS[1], -16,  0, -2, 1.0);
+      addShape(new OctahedronGeometry(2),           COLORS[1],  -6,-10,  1, 1.0);
+      addShape(new OctahedronGeometry(1.5),         COLORS[0],  14,  8,  0, 0.9);
+      addShape(new BoxGeometry(1.5, 1.5, 1.5),      COLORS[2],  16, -8, -3, 1.2);
+      addShape(new TorusGeometry(2, 0.5, 8, 16),    COLORS[1],  12, -2, -4, 0.9);
+      addShape(new BoxGeometry(1, 1, 1),             COLORS[2],  -4, 12, -2, 1.8);
+      addShape(new ConeGeometry(1, 2.5, 4),          COLORS[0],   6, 14, -3, 1.3);
+      addShape(new TorusGeometry(1, 0.35, 8, 16),   COLORS[2],   4,  6, -5, 1.6);
 
       let mx = 0, my = 0;
-      const onMouse = (e: MouseEvent) => { mx = e.clientX - window.innerWidth / 2; my = e.clientY - window.innerHeight / 2; };
+      const onMouse = (e: MouseEvent) => {
+        mx = e.clientX - window.innerWidth / 2;
+        my = e.clientY - window.innerHeight / 2;
+      };
       window.addEventListener("mousemove", onMouse);
 
       const onResize = () => {
@@ -454,26 +469,34 @@ function ThreeCanvasWrapper() {
         objects.forEach((o) => {
           o.rotation.x += o.userData.rx;
           o.rotation.y += o.userData.ry;
-          o.position.y = o.userData.yBase + Math.sin(t + o.userData.yOff) * 0.5;
+          o.position.y = o.userData.yBase + Math.sin(t + o.userData.yOff) * 0.6;
         });
-        camera.position.x += (mx * 0.005 - camera.position.x) * 0.05;
-        camera.position.y += (-my * 0.005 - camera.position.y) * 0.05;
+        // Subtle parallax with mouse
+        camera.position.x += (mx * 0.003 - camera.position.x) * 0.04;
+        camera.position.y += (-my * 0.003 - camera.position.y) * 0.04;
         camera.lookAt(scene.position);
         renderer.render(scene, camera);
         animId = requestAnimationFrame(tick);
       };
       animId = requestAnimationFrame(tick);
 
-      return () => {
+      // Store cleanup so the outer useEffect return can call it
+      cleanupFn = () => {
         window.removeEventListener("mousemove", onMouse);
         window.removeEventListener("resize", onResize);
         cancelAnimationFrame(animId);
-        if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+        try {
+          if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+        } catch {/* ignore */}
         renderer.dispose();
       };
     });
 
-    return () => cancelAnimationFrame(animId);
+    // This is the actual useEffect cleanup — called on unmount
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupFn?.();
+    };
   }, []);
 
   return <div ref={containerRef} id="three-canvas-container" />;
